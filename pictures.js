@@ -55,7 +55,7 @@ function blurImage(inputImageData) {
 
 // this function tests pixels against a threshold
 
-function outlineImage(inputImageData, threshold) {
+function applyThreshold(inputImageData, threshold) {
 
 	// reassign, not copy, the image data object
 	var imgData = inputImageData;
