@@ -113,3 +113,71 @@ function restoreColors(inputImageData, originalImageData) {
 	}
 	return imgData;
 }
+
+// this function uses inputImageData, does a 3x3 matrix, scales the sum of absolute diff to those 9 cells, and then returns a value to outputImageData
+// if I output directly to inputImageData, I'm changing the imgData thats being used as an argument before im done with it, skewing the results
+
+function applyContrast(inputImageData, outputImageData) {
+	
+	// reassign, not copy, the image data object
+	var imgData = inputImageData;
+	var w = imgData.width;
+	var h = imgData.height;
+
+	var matrixSize = 3;
+	var offset = Math.floor(matrixSize/2);
+	
+	for (var i = 0; i < imgData.data.length; i+=4) {
+	
+		// for each element, get the x-y coordinates
+		var pixel = Math.floor(i/4);
+		var y = Math.floor(pixel/w);
+		var x = pixel - y*w;
+		
+		var rTotal = 0;
+		var gTotal = 0;
+		var bTotal = 0;
+		
+		// loop over the surrounding pixels
+		for (var j = 0; j < matrixSize; j++) {
+			for (var k = 0; k < matrixSize; k++) {
+      
+				// i need to offset x and y
+				var x1 = x + j - offset;
+				x1 = Math.min(Math.max(x1, 0), w-1);  // constrain x1 between 0 and w
+				var y1 = y + k - offset;
+				y1 = Math.min(Math.max(y1, 0), h-1);
+				var loc = x1 + y1*w;
+				loc = Math.min(Math.max(loc, 0), w*h-1);
+				
+				rTotal += Math.abs(imgData.data[4*loc+0]-imgData.data[i+0]);
+				gTotal += Math.abs(imgData.data[4*loc+1]-imgData.data[i+1]);
+				bTotal += Math.abs(imgData.data[4*loc+2]-imgData.data[i+2]);
+			}
+		}
+		
+		rTotal = rTotal/8;
+		gTotal = gTotal/8;
+		bTotal = bTotal/8;
+		
+		var threshold = 20;
+		if (rTotal > threshold || gTotal > threshold || bTotal > threshold) {
+			var r1 = imgData.data[i+0];
+			var g1 = imgData.data[i+1];
+			var b1 = imgData.data[i+2];
+			let w = r1 + g1 + b1;
+			w = Math.floor(w/3);
+			outputImageData.data[i+0] = w;  
+			outputImageData.data[i+1] = w;
+			outputImageData.data[i+2] = w;
+		} else {
+			outputImageData.data[i+0] = 255;  
+			outputImageData.data[i+1] = 255;
+			outputImageData.data[i+2] = 255;			
+
+		}	
+
+		outputImageData.data[i+3] = 255;
+	}
+	return outputImageData;	
+}
