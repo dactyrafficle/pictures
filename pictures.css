@@ -1,0 +1,50 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  height: 100%;
+  overflow-y: auto;
+  left: 0;
+  width: 300px;
+  border-right: 1px solid #101010;
+}
+.sidebar-contents {
+  margin: 10px;
+  padding: 5px;
+  border: 1px solid black;
+}
+.control-images {
+  text-align: center;
+}
+.control-image {
+  display: inline-block;
+  width: 45%;
+}
+.myMainContainer {
+	position: absolute;
+  left: 300px;
+}
+.notes {
+  margin-left: 300px;
+  background-color: rgba(50, 175, 50, 0.25);
+}
+.mods {
+  display: block;
+}
+button {
+  font-family: consolas;
+  margin: 3px;
+  padding: 3px;
+}
+.slider-names {
+  display: inline-block;
+  width: 50px;
+}
+.inline-code {
+  font-family: monospace;
+  background-color: #dddddd;
+  padding: 3px;
+}
+
+.myImageContainer {
+	border: 2px solid black;
+}
