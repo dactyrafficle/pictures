@@ -1,84 +1,13 @@
 <!DOCTYPE html>
 <html>
-<title>drag/drop change src + copy to canvas</title>
+<title>drag/drop an img</title>
 
-<!--
-
-	** i have a function returnCanvasImageData(canvas, context) which returns the image data of what is on the canvas
-	   i think most functions should work by manipulating the canvas image data
-
--->
 <link rel="stylesheet" type="text/css" href="pictures.css">
 <link rel="icon" href="fav.png">
 <head>
 
-<style>
-
-.mySidebar {
-  position: fixed;
-  top: 0;
-  height: 100%;
-  overflow-y: auto;
-  left: 0;
-  //width: 300px;
-  border-right: 2px solid #999;
-}
-.mySidebarContents {
-  margin: 10px;
-  padding: 5px;
-  border: 2px solid #ddd;
-	width: 230px;
-}
-.outer {
-  display: table;
-	height: 110px;
-	overflow-y: hidden;
-}
-.middle {
-  display: table-cell;
-  vertical-align: middle;
-	height: 100%;
-}
-.inner {
-  margin-left: auto;
-  margin-right: auto;
-}
-.myImage {
-	display: block;
-	margin: auto;
-}
-
-
-button {
-  font-family: consolas;
-  margin: 3px;
-  padding: 3px;
-}
-
-.sliderNames {
-  display: inline-block;
-  width: 50px;
-}
-
-
-
-.myMain {
-	position: absolute;
-	left: 280px;
-}
-.myDropZone {
-	width: 400px;
-	height: 300px;
-	border: 2px solid #ddd;
-	line-height: 300px;
-	text-align: center;
-	font-family: calibri, 'sans-serif';
-	font-size: 20px;
-	margin: 6px;
-	padding: 6px;
-}
-
-</style>
+<style></style>
+	
 </head>
 
 <div id='myMain' class='myMain'>
@@ -161,7 +90,7 @@ button {
 
 
 <script src='https://cdn.jsdelivr.net/gh/snorpey/triangulate-image/dist/triangulate-image-browser.min.js'></script>
-<script src='https://cdn.jsdelivr.net/gh/dactyrafficle/pictures/pictures.js'></script>
+<script src='pictures.js'></script>
 
 <script>
 
