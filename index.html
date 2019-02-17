@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+<title>drag/drop change src + copy to canvas</title>
+
+<!--
+
+	** i have a function returnCanvasImageData(canvas, context) which returns the image data of what is on the canvas
+	   i think most functions should work by manipulating the canvas image data
+
+-->
+<link rel="stylesheet" type="text/css" href="images.css">
+<link rel="icon" href="../../fav.png">
+<head>
+
+<style>
+
+.mySidebar {
+  position: fixed;
+  top: 0;
+  height: 100%;
+  overflow-y: auto;
+  left: 0;
+  //width: 300px;
+  border-right: 2px solid #999;
+}
+.mySidebarContents {
+  margin: 10px;
+  padding: 5px;
+  border: 2px solid #ddd;
+	width: 230px;
+}
+.outer {
+  display: table;
+	height: 110px;
+	overflow-y: hidden;
+}
+.middle {
+  display: table-cell;
+  vertical-align: middle;
+	height: 100%;
+}
+.inner {
+  margin-left: auto;
+  margin-right: auto;
+}
+.myImage {
+	display: block;
+	margin: auto;
+}
+
+
+button {
+  font-family: consolas;
+  margin: 3px;
+  padding: 3px;
+}
+
+.sliderNames {
+  display: inline-block;
+  width: 50px;
+}
+
+
+
+.myMain {
+	position: absolute;
+	left: 280px;
+}
+.myDropZone {
+	width: 400px;
+	height: 300px;
+	border: 2px solid #ddd;
+	line-height: 300px;
+	text-align: center;
+	font-family: calibri, 'sans-serif';
+	font-size: 20px;
+	margin: 6px;
+	padding: 6px;
+}
+
+</style>
+</head>
+
+<div id='myMain' class='myMain'>
+	<div id='myDropZone' class='myDropZone'>
+		<span id='myDropZoneText' class='myDropZoneText'>Drag and drop and image here.</span>
+		<canvas id='myCanvas' class='myCanvas'></canvas>
+	</div>
+</div>
+
+<div id='mySidebar' class='mySidebar'>
+
+	<p><a href='../../' style='margin-left: 10px; text-decoration: none;'>Home</a></p>
+ 
+ 	<div class='mySidebarContents outer'>
+			<div class='middle'>
+				<div class='inner'>
+					<img id='myImage' class='myImage' src='images/frog.jpg' width='100' />
+				</div>
+			</div>
+
+	</div>
+ 
+	<div class='mySidebarContents'>
+		<div class='mod-headers'>Basic</div>
+		<button id='restore'>restore</button>
+		<div><span class='sliderNames'>red</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myInputRed'/><span id='myInputRedValue'>50</span></div>
+		<div><span class='sliderNames'>green</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myInputGreen'/><span id='myInputGreenValue'>50</span></div>
+		<div><span class='sliderNames'>blue</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myInputBlue'/><span id='myInputBlueValue'>50</span></div>
+		<div><span class='sliderNames'>gray</span><input class='myInputs' type='range' min='0' max='100' value='0' id='myInputGray'/><span id='myInputGrayValue'>0</span></div>
+		<div><span class='sliderNames'>invert</span><input class='myInputs' type='range' min='0' max='100' value='0' id='myInputInvert'/><span id='myInputInvertValue'>0</span></div>
+	</div>
+	
+	<div class='mySidebarContents'>
+		<div class='mod-headers'>Pointillize</div>
+		<button id='pointillizeStart'>start</button>
+		<button id='pointillizeStop'>stop</button>
+	</div>
+	
+	<div class='mySidebarContents'>
+		<div class='mod-headers'>Triangulate, algo: <a href='https://github.com/snorpey/triangulation' target='_blank'>here</a></div>
+		<button id='triangulate'>start</button>
+	</div>
+
+	<div class='mySidebarContents'>
+		<div class='mod-headers'>Blur (3x3 linear)</div>
+		<button id='myBlurButton'>go!</button>
+	</div>
+	
+	<div class='mySidebarContents'>
+		<div class='mod-headers'>Threshold</div>
+		<button id='myThresholdButton'>go!</button>
+	</div>
+	
+	<div class='mySidebarContents'>
+		<div class='mod-headers'>Restore colors (of non-255 pixels)</div>
+		<button id='myRestoreColorsButton'>go!</button>
+	</div>
+	
+	<div class='mySidebarContents'>
+		<div class='mod-headers'>Pixellate</div>
+		<button id='myPixelationButton'>go!</button>
+	</div>
+	
+	<div class='mySidebarContents'>
+		<div class='mod-headers'>Contrast</div>
+		<button id='myContrastButton'>go!'</button>
+		<p>maybe sthing like rss of 3x3 matrix under threshold?</p>
+	</div>
+	
+	<div class='mySidebarContents'>
+		<div class='mod-headers'>circles?</div>
+	</div>
+	
+	<div class='mySidebarContents'>
+		<div class='mod-headers'>Sobel edge detection</div>
+		<button id='mySobelButton'>apply!</button>
+	</div>
+</div>
+
+
+
+<script src='https://cdn.jsdelivr.net/gh/snorpey/triangulate-image/dist/triangulate-image-browser.min.js'></script>
+<script src='https://cdn.jsdelivr.net/gh/dactyrafficle/pictures/pictures.js'></script>
+<script src='pictures2.js?x=' + Math.random()></script>
+
+<script>
+
+// setup variables
+var myDropZone, myImage, myDropZoneText;
+var c, ctx;
+var originalImageData, workingImageData;
+var myInputArray;
+var draw;
+
+// initializing
+(function() {
+
+	myInputArray = [50, 50, 50, 0, 0];
+	console.log(myInputArray);
+
+	// get the main variables
+	myDropZone = document.getElementById('myDropZone');
+  myImage = document.getElementById('myImage');
+	myDropZoneText = document.getElementById('myDropZoneText');
+  c = document.getElementById('myCanvas');
+  ctx = c.getContext('2d');
+
+  myDropZone.addEventListener('dragenter', function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    this.style.border = '2px solid #999';
+  }, false);	
+
+  myDropZone.addEventListener('dragover', function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    this.style.border = '2px solid #999';
+  }, false);
+
+  myDropZone.addEventListener('dragleave', function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    this.style.border = '2px solid #ddd';
+  }, false);
+
+  myDropZone.addEventListener('drop', function(e) {
+  
+		// 1. stop the default behavior of drop
+    e.stopPropagation();
+    e.preventDefault();
+    this.style.border = '2px solid #ddd';
+
+		// 2. capture the file
+		var file = e.dataTransfer.files[0];
+		console.log('info about the drop event:');
+		console.log(file);
+	
+		// 3. capture the file type and see if it is a valid file type
+		fileType = file.name.split('.')[file.name.split('.').length-1];
+		var validImage = isValidImageFileType(fileType);
+	
+		if (validImage) {
+			
+			// 4.0 check if fileReader exists				
+			if (!window.FileReader) {
+				alert('You need to update your browser.');
+				return;
+			}
+				
+			// 4.1 make a fileReader object
+			var reader = new FileReader();
+			
+			// 5.0 define the fileReader load event
+			reader.addEventListener('load', function(e) {
+			
+				console.log('info about the filereader reading the file:');
+				console.log(e);
+				
+				// load the image into a new src tag to get the original image attributes
+				var tempImage = document.createElement('img');
+				tempImage.src = e.target.result;
+				tempImage.onload = function() {
+				
+					// tempImage is where myImage and myCanvas get their data
+					
+					var originalImageWidth = tempImage.width;
+					var originalImageHeight = tempImage.height;
+
+					// initializes the canvas: clear and resize dropzone + canvas, set thumbnail and capture original image data
+					placeImageOnCanvasAndSetOriginalImgData(myDropZone, c, ctx, myImage, tempImage, originalImageWidth, originalImageHeight);
+					let x = returnCanvasImageData(c, ctx);
+					let y = modify(x, myInputArray)
+					ctx.putImageData(y, 0, 0);
+					
+					
+				}
+
+			}, false);
+
+			// 6 pass file to reader which triggers what we defined in step 5
+			reader.readAsDataURL(file);
+
+		} // closing the if statement
+		
+  }, false); // closing the drop callback
+	
+	// restore canvas event listener
+	document.getElementById('restore').addEventListener('click', function() {
+		stopPointillization();
+		restoreCanvas(ctx);
+		restoreMyInputs();
+	});
+	
+	
+	// adding an event listener for the sliders
+	var myInputs = document.getElementsByClassName('myInputs');
+	for (var i = 0; i < myInputs.length; i++) {
+		myInputs[i].addEventListener('change', function() {
+			updateInputArray();
+			var x = returnCanvasImageData(c, ctx);
+			var y = modify(x, myInputArray);
+			ctx.putImageData(y, 0, 0);
+		});
+	}
+	
+	// adding event listeners for the pointillization buttons
+	document.getElementById('pointillizeStart').addEventListener('click', function() {
+		pointillize(c, ctx);
+	});
+	document.getElementById('pointillizeStop').addEventListener('click', function() {
+		//console.log('dssdf');
+		stopPointillization();
+	});
+	
+	// triangulate snorpey function
+	document.getElementById('triangulate').addEventListener('click', function() {
+		// https://github.com/snorpey/triangulate-image#fromimagedata
+		triangulate()
+			.fromImageData(workingImageData)  // the data comes from workingImageData
+			.toImageData()
+			.then( function (workingImageData) {  // and gets written to workingImageData
+				ctx.putImageData(workingImageData, 0, 0 );
+				//workingImageData.data.set(workingImageData.data); // in this case, i'm copying the local workingImageData to the global one
+			});
+	});
+	
+	// blur event listener
+	document.getElementById('myBlurButton').addEventListener('click', function() {
+		var x = returnCanvasImageData(c, ctx); // return an imgdata object
+		var y = blurImage(x); 									// accepts and imgdata object and returns an imgdata object
+		ctx.putImageData(y, 0, 0);
+	});
+	
+	// threshold event listener
+	document.getElementById('myThresholdButton').addEventListener('click', function() {
+		var x = returnCanvasImageData(c, ctx);	// return an imgdata object
+		var y = applyThreshold(x); 								// accepts and imgdata object and returns an imgdata object
+		ctx.putImageData(y, 0, 0);
+	});
+	
+	// restore colors event listener
+	document.getElementById('myRestoreColorsButton').addEventListener('click', function() {
+		var x = returnCanvasImageData(c, ctx);	// return an imgdata object
+		var y = restoreColors(x, originalImageData); 						// accepts and imgdata object and returns an imgdata object
+		restoreMyInputs();
+		ctx.putImageData(y, 0, 0);
+	});
+	
+	// contrast, this one is hard
+	document.getElementById('myContrastButton').addEventListener('click', function() {
+		var x = returnCanvasImageData(c, ctx);	// return an imgdata object
+		var z = ctx.createImageData(x);
+		z.data.set(x.data);
+		var y = applyContrast(x, z); 						// accepts and imgdata object and returns an imgdata object
+		//restoreMyInputs();
+		ctx.putImageData(y, 0, 0);
+	});
+	
+	// intensity gradient event listener
+	document.getElementById('mySobelButton').addEventListener('click', function() {
+		var x = returnCanvasImageData(c, ctx); // return an imgdata object
+		var z = ctx.createImageData(x);
+		z.data.set(x.data);
+		var y = applySobel(x, z);		// accepts and imgdata object and returns an imgdata object
+		ctx.putImageData(y, 0, 0);
+	});
+	
+ 	// intensity gradient event listener
+	document.getElementById('myPixelationButton').addEventListener('click', function() {
+		var x = returnCanvasImageData(c, ctx); // return an imgdata object
+		var z = ctx.createImageData(x);
+		z.data.set(x.data);
+		var y = applyPixelation(x, z);		// accepts and imgdata object and returns an imgdata object
+		ctx.putImageData(y, 0, 0);
+	});
+	
+}());  // closing initialization
+
+
+// prepare the canvas after dropping image file
+function placeImageOnCanvasAndSetOriginalImgData(container, canvas, context, myImage, tempImage, originalImageWidth, originalImageHeight) {
+	
+	// clear the contents of dropZone
+	myDropZoneText.style.display = 'none';
+	
+	console.log('original size: ' + originalImageWidth + ' x ' + originalImageHeight);
+	var imageWidth = originalImageWidth;
+	var imageHeight = originalImageHeight;
+	
+	// resizing the container (myDropZone)
+	var maxDimension = 700;
+	if (imageWidth > maxDimension) {
+	  imageHeight *= maxDimension/imageWidth;
+		imageWidth = maxDimension;
+	}
+	if (imageHeight > maxDimension) {
+	  imageWidth *= maxDimension/imageHeight;
+		imageHeight = maxDimension;
+	}
+	container.style.width = imageWidth + 'px';
+	container.style.height = imageHeight + 'px';
+	
+	
+	// set the thumbnail version of the image
+	myImage.src = tempImage.src;
+	
+	if (imageWidth >= imageHeight) {
+		myImage.width = 100;
+		myImage.height = imageHeight/imageWidth*100;
+	} else {
+		myImage.height = 100;
+		myImage.width = imageWidth/imageHeight*100;
+	}
+	
+	// resizing the canvas (myCanvas)
+	canvas.width = imageWidth;
+	canvas.height = imageHeight;
+	
+	// drawing the tempImage onto the canvas
+	context.drawImage(tempImage, 0, 0, canvas.width, canvas.height);
+	
+	// capture the image data of the whole canvas
+	originalImageData = context.getImageData(0, 0, canvas.width, canvas.height);
+	workingImageData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+}
+
+// basic validation
+function isValidImageFileType(fileType) {
+  let allowableFileTypes = ['png', 'jpg', 'jpeg', 'jfif', 'gif', 'bmp'];
+  let validImageFileType = false;
+  if (allowableFileTypes.indexOf(fileType) !== -1) {
+    validImageFileType = true;
+  } else {
+    console.log('You can only use the following file types right now: ' + allowableFileTypes);
+  }
+  return validImageFileType;
+}
+
+// updates slider values and myInputArray values
+function updateInputArray() {
+  var inputs = document.getElementsByClassName('myInputs');
+	for (var i = 0; i < inputs.length; i++) {
+		inputs[i].nextElementSibling.textContent = inputs[i].value;
+		myInputArray[i] = inputs[i].value;
+	}
+	console.log(myInputArray);
+}
+
+
+function restoreCanvas(context) {
+	workingImageData.data.set(originalImageData.data);
+	context.putImageData(workingImageData, 0, 0);	
+}
+
+function restoreMyInputs() {
+  var inputs = document.getElementsByClassName('myInputs');
+	for (var i = 0; i < inputs.length; i++) {
+		if (i < 3) {
+			inputs[i].value = 50;
+		} else {
+			inputs[i].value = 0;
+		}
+		inputs[i].nextElementSibling.textContent = inputs[i].value;
+		myInputArray[i] = inputs[i].value;
+	}
+	console.log(myInputArray);
+}
+
+
+// pointillization functions
+
+function pointillize(canvas, context) {
+
+  if (draw) {
+		clearInterval(draw);
+	}
+
+	// this function is special, so we're getting the imgdata right from the canvas
+	var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+	
+	ctx.beginPath();
+	ctx.rect(0, 0, c.width, c.height);
+	ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+	ctx.fill();
+	
+	draw = setInterval(function() {  
+
+	for (var i = 0; i < 100; i++) {
+
+		// pick random integers x and y
+		var y = Math.floor(Math.random()*c.height);
+		var x = Math.floor(Math.random()*c.width);
+
+		// get its position in the array
+		var loc = (y*c.width + x)*4;
+
+		// alpha in rgba goes from 0 to 1
+		var r = imgData.data[loc];
+		var g = imgData.data[loc+1];
+		var b = imgData.data[loc+2];
+		var a = 0.5;
+
+		var radius = Math.floor(2+Math.random()*3);
+		//radius = 1;
+		
+		ctx.beginPath();
+		ctx.arc(x, y, radius, 0, 2*Math.PI);
+		ctx.fillStyle = 'rgb(' + r + ',' + g + ', ' + b + ',' + a + ')';
+		ctx.fill()
+	}
+
+	}, 50);  // closing setInterval()
+}
+function stopPointillization() {
+  clearInterval(draw);
+	
+	//i need to save the canvas data as an imgData object
+	
+	workingImageData = ctx.getImageData(0, 0, c.width, c.height); // very interesting!!!
+}
+
+// blur function returns an image data object
+
+function returnCanvasImageData(canvas, context) {
+	x = context.getImageData(0, 0, canvas.width, canvas.height);
+	return x;
+}
+
+
+
+</script>
+</html>
