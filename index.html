@@ -181,7 +181,12 @@ var draw;
 					// initializes the canvas: clear and resize dropzone + canvas, set thumbnail and capture original image data
 					placeImageOnCanvasAndSetOriginalImgData(myDropZone, c, ctx, myImage, tempImage, originalImageWidth, originalImageHeight);
 					
-					let y = modify(workingImageData, myInputArray)
+					// make a copy of workingImageData
+					var x = ctx.createImageData(workingImageData);
+					x.data.set(workingImageData.data);
+					
+					// feed it thru the meat grinder
+					var y = modify(x, myInputArray);
 					ctx.putImageData(y, 0, 0);
 					
 					
@@ -223,8 +228,9 @@ var draw;
 		pointillize(c, ctx);
 	});
 	document.getElementById('pointillizeStop').addEventListener('click', function() {
-		//console.log('dssdf');
 		stopPointillization();
+		
+		// updating workingImageData
 		var x = returnCanvasImageData(c, ctx);
 		workingImageData.data.set(x.data);
 	});
@@ -246,6 +252,10 @@ var draw;
 		var x = returnCanvasImageData(c, ctx); // return an imgdata object
 		var y = blurImage(x); 									// accepts and imgdata object and returns an imgdata object
 		ctx.putImageData(y, 0, 0);
+		
+		// updating workingImageData
+		var s = returnCanvasImageData(c, ctx);
+		workingImageData.data.set(s.data);
 	});
 	
 	// threshold event listener
@@ -253,6 +263,10 @@ var draw;
 		var x = returnCanvasImageData(c, ctx);	// return an imgdata object
 		var y = applyThreshold(x); 								// accepts and imgdata object and returns an imgdata object
 		ctx.putImageData(y, 0, 0);
+		
+		// updating workingImageData
+		var s = returnCanvasImageData(c, ctx);
+		workingImageData.data.set(s.data);
 	});
 	
 	// restore colors event listener
@@ -271,6 +285,10 @@ var draw;
 		var y = applyContrast(x, z); 						// accepts and imgdata object and returns an imgdata object
 		//restoreMyInputs();
 		ctx.putImageData(y, 0, 0);
+		
+		// updating workingImageData
+		var s = returnCanvasImageData(c, ctx);
+		workingImageData.data.set(s.data);
 	});
 	
 	// intensity gradient event listener
@@ -280,6 +298,10 @@ var draw;
 		z.data.set(x.data);
 		var y = applySobel(x, z);		// accepts and imgdata object and returns an imgdata object
 		ctx.putImageData(y, 0, 0);
+		
+		// updating workingImageData
+		var s = returnCanvasImageData(c, ctx);
+		workingImageData.data.set(s.data);
 	});
 	
  	// intensity gradient event listener
@@ -289,6 +311,10 @@ var draw;
 		z.data.set(x.data);
 		var y = applyPixelation(x, z);		// accepts and imgdata object and returns an imgdata object
 		ctx.putImageData(y, 0, 0);
+		
+		// updating workingImageData
+		var s = returnCanvasImageData(c, ctx);
+		workingImageData.data.set(s.data);
 	});
 	
 }());  // closing initialization
