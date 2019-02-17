@@ -1,3 +1,44 @@
+// change each pixel based on myInputArray
+function modify(inputImageData, myInputArray) {
+
+	var redPct = myInputArray[0];
+	var greenPct = myInputArray[1];
+	var bluePct = myInputArray[2];
+	var grayPct = myInputArray[3];
+	var invertPct = myInputArray[4];
+	
+	for (var i = 0; i < inputImageData.data.length; i+=4) {
+		// modify rgb
+		let r1 = abc(inputImageData.data[i+0], redPct/100);
+		let g1 = abc(inputImageData.data[i+1], greenPct/100);
+		let b1 = abc(inputImageData.data[i+2], bluePct/100);
+		// apply gray
+		let x = r1 + g1 + b1;
+		x = x/3;
+		let r2 = r1-(grayPct/100)*(r1-x);
+		let g2 = g1-(grayPct/100)*(g1-x);
+		let b2 = b1-(grayPct/100)*(b1-x);
+		// apply inversion
+		inputImageData.data[i+0] = r2+(255-2*r2)*invertPct/100;
+		inputImageData.data[i+1] = g2+(255-2*g2)*invertPct/100;
+		inputImageData.data[i+2] = b2+(255-2*b2)*invertPct/100;
+		inputImageData.data[i+3] = 255; 
+	}
+	
+	return inputImageData;
+}
+
+function abc(val, pct) {
+	if (pct > 0.5) {
+	  return val + (255-val)*(pct-0.5)*2;
+	} else if (pct < 0.5) {
+	  return val - (val-0)*(0.5-pct)*2;
+	} else {
+	  return val;
+	}
+}
+
+
 // this function applies a 3x3 linear blur to a javascript imgData object
 
 function blurImage(inputImageData) {
