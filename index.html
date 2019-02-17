@@ -209,8 +209,12 @@ var draw;
 	for (var i = 0; i < myInputs.length; i++) {
 		myInputs[i].addEventListener('change', function() {
 			updateInputArray();
-			var x = modify(workingImageData, myInputArray);
-			ctx.putImageData(x, 0, 0);
+			// make a copy of workingImageData
+			var x = ctx.createImageData(workingImageData);
+			x.data.set(workingImageData.data);
+			// feed it thru the meat grinder
+			var y = modify(x, myInputArray);
+			ctx.putImageData(y, 0, 0);
 		});
 	}
 	
