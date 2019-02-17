@@ -28,6 +28,7 @@ function modify(inputImageData, myInputArray) {
 	return inputImageData;
 }
 
+// it always assumes pct is 50. that why when i rest on 70-70-30 for example, it warps the colors
 function abc(val, pct) {
 	if (pct > 0.5) {
 	  return val + (255-val)*(pct-0.5)*2;
@@ -38,25 +39,18 @@ function abc(val, pct) {
 	}
 }
 
-
 // this function applies a 3x3 linear blur to a javascript imgData object
+function applyBlur(inputImageData, outputImageData) {
 
-function blurImage(inputImageData) {
-
-	// reassign, not copy, the image data object
-	var imgData = inputImageData;
-	console.log(imgData);
-	console.log(imgData.data.length);
-	var w = imgData.width;
-	var h = imgData.height;
-	console.log(w + " x " + h);
+	var w = inputImageData.width;
+	var h = inputImageData.height;
 
 	var matrixSize = 3;
 	var v = 1/9;
 	var matrix = [[v*1, v*1, v*1], [v*1, v*1, v*1], [v*1, v*1, v*1]];
 	var offset = Math.floor(matrixSize/2);
 	
-	for (var i = 0; i < imgData.data.length; i+=4) {
+	for (var i = 0; i < inputImageData.data.length; i+=4) {
 	
 		// for each element, get the x-y coordinates
 		var pixel = Math.floor(i/4);
@@ -79,51 +73,49 @@ function blurImage(inputImageData) {
 				var loc = x1 + y1*w;
 				loc = Math.min(Math.max(loc, 0), w*h-1);
 				
-				rTotal += imgData.data[4*loc+0]*matrix[j][k];
-				gTotal += imgData.data[4*loc+1]*matrix[j][k];
-				bTotal += imgData.data[4*loc+2]*matrix[j][k];
+				rTotal += inputImageData.data[4*loc+0]*matrix[j][k];
+				gTotal += inputImageData.data[4*loc+1]*matrix[j][k];
+				bTotal += inputImageData.data[4*loc+2]*matrix[j][k];
 			}
 		}
 		
 		// write over the elements
-		imgData.data[i+0] = rTotal;  
-		imgData.data[i+1] = gTotal;
-		imgData.data[i+2] = bTotal;
-		imgData.data[i+3] = 255;
+		outputImageData.data[i+0] = rTotal;  
+		outputImageData.data[i+1] = gTotal;
+		outputImageData.data[i+2] = bTotal;
+		outputImageData.data[i+3] = 255;
 	}
-	return imgData;	
+	return outputImageData;	
 }
 
 // this function tests pixels against a threshold
 
-function applyThreshold(inputImageData, threshold) {
+function applyThreshold(inputImageData, outputImageData, threshold) {
 
-	// reassign, not copy, the image data object
-	var imgData = inputImageData;
-	var w = imgData.width;
-	var h = imgData.height;
-	if (!arguments[1]) {
+	var w = inputImageData.width;
+	var h = inputImageData.height;
+	if (!arguments[2]) {
 		threshold = 50;
 	}
-	for (var i = 0; i < imgData.data.length; i+=4) {
+	for (var i = 0; i < inputImageData.data.length; i+=4) {
 	
 		// if any of r,g or b is greater than threshold, then we set all of them to black, else, white
-		let r1 = imgData.data[i+0];  
-		let g1 = imgData.data[i+1];
-		let b1 = imgData.data[i+2];
+		let r1 = inputImageData.data[i+0];  
+		let g1 = inputImageData.data[i+1];
+		let b1 = inputImageData.data[i+2];
 		if (r1 < threshold || g1 < threshold || b1 < threshold) {
-			imgData.data[i+0] = 0;  
-			imgData.data[i+1] = 0;
-			imgData.data[i+2] = 0;
-			imgData.data[i+3] = 255;		
+			outputImageData.data[i+0] = 0;  
+			outputImageData.data[i+1] = 0;
+			outputImageData.data[i+2] = 0;
+			outputImageData.data[i+3] = 255;		
 		} else {
-			imgData.data[i+0] = 255;  
-			imgData.data[i+1] = 255;
-			imgData.data[i+2] = 255;
-			imgData.data[i+3] = 255;			
+			outputImageData.data[i+0] = 255;  
+			outputImageData.data[i+1] = 255;
+			outputImageData.data[i+2] = 255;
+			outputImageData.data[i+3] = 255;			
 		}
 	}
-	return imgData;
+	return outputImageData;
 }
 
 // this function reassigns the color of any non-255 pixel
