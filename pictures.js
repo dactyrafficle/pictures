@@ -326,3 +326,13 @@ function applyPixelation(inputImageData, outputImageData) {
 	}
 	return outputImageData;	
 }
+
+function copyImageData(inputImageData) {
+  var x = document.createElement('canvas');
+  x.width = inputImageData.width;
+  x.height = inputImageData.height;
+  var y = x.getContext('2d');
+  y.putImageData(inputImageData, 0, 0);
+  var outputImageData = y.getImageData(0, 0, inputImageData.width, inputImageData.height);
+  return outputImageData;
+}
