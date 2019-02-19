@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<title>image manipulation notes</title>
+
+<head>
+
+<link rel="stylesheet" type="text/css" href="../../coding.css">
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<style></style>
+
+</head>
+
+<div id='notes' class='notes'>
+
+<p> This is my project started on 2018-11-05. </p>
+
+<h4> Overview </h4>
+
+<p> The steps I'm using are as follows: </p>
+<ol>
+  <li> Set the <span class='inline-code'>src</span> of an <span class='inline-code'>img</span> tag
+  <li> Listen for the <span class='inline-code'>img.onload</span> event, then copy the image onto the canvas
+  <li> Extract the imgage data from the canvas
+  <li> Manipulate the imgData object, and
+  <li> Place the new imgData object onto the canvas</li>
+</ol>
+
+<p> The <span class='inline-code'>src</span> can come from a lot of places but if it comes from anywhere outside the server, or from a data url, we cannot use <span class='inline-code'>getImageData()</span> to extract <span class='inline-code'>imgData</span> object once it is on the canvas because the default is for browsers to not allow CORS </p>
+
+<h4> Setup</h4>
+
+<pre class='blue'>var c, ctx;
+c = document.getElementById('myCanvas');
+ctx = c.getContext('2d');</pre>
+
+<p> The container element is only a container for graphics. But the <span class='inline-code'>getContext()</span> method returns an object that we can use to draw on the canvas</p>
+
+<h4> Copy and image from an img tag and draw on the canvas using drawImage()</h4>
+
+<pre class='blue'>var img = document.getElementById('myImage');
+c.width = img.width; <span class='green'>// make sure the canvas has the same size as the image</span>
+c.height = img.height;
+ctx.drawImage(img, 0, 0);</pre>
+
+<h4> In fact, I think all I need is a src attribute</h4>
+<pre class='blue'>var x = document.createElement('img');
+x.src = 'some src';  <span class='green'>// this could even be a data url</span>
+c.width = x.width;
+c.height = x.height;
+ctx.drawImage(x, 0, 0);</pre>
+
+<h4> Pixel manipulation </h4>
+
+<p> Using the canvas is the only way to make the image data object, and that's the only way to modify pixels in javascript</p>
+<p> In every program, it all starts with using <span class='inline-code'>drawImage()</span> to copy an image (like from the img tag or data url) onto a canvas, from which we can get the pixel data</p>
+
+<h4> Create an image data from the canvas using getImageData() </h4>
+
+<pre class='blue'>var imgData = ctx.getImageData(0, 0, c.width, c.height);</pre>
+
+<h4> The image data object </h4>
+<p> An image data object has 3 properties:</p>
+<ul><li>height<li>width<li>data, which is a Uint8ClampedArray</li></ul>
+<pre class='blue'>ImageData {data: Uint8ClampedArray(1470000), width: 700, height: 525}</pre>
+
+<p> The length of data will be <span class='inline-code'>4*w*h</span> which makes sense because there will be <span class='inline-code'>w*h</span> pixels and each pixel will have a red, green, blue and alpha value</p>
+
+
+<h4> Print an image data object to the canvas </h4>
+
+<pre class='blue'>ctx.putImageData(imgData, 0, 0);</pre>
+
+<h4> How to copy an image data object? </h4>
+
+<p><a href='https://stackoverflow.com/questions/5642383/copy-imagedata-by-value-in-javascript/11918126#11918126'>careful</a></p>
+
+<p> If you have access to the context, you can create a blank object and copy the data in 2 steps.</p>
+<pre class='blue'>var x = ctx.createImageData(imgData); <span class='green'>// this creates a new object with the same dimensions but does not itself copy the data</span>
+x.data.set(imgData.data);</pre>
+
+<h4> Suppose you had only the image data? </h4>
+
+<pre class='blue'>function copyImageData(inputImageData) {
+  var x = document.createElement('canvas');
+  x.width = inputImageData.width;
+  x.height = inputImageData.height;
+  var y = x.getContext('2d');
+  y.putImageData(inputImageData, 0, 0);
+  var outputImageData = y.getImageData(0, 0, inputImageData.width, inputImageData.height);
+  return outputImageData;
+}</pre>
+
+<h4> Copy only the data </h4>
+
+<pre class='blue'>var x = new Uint8ClampedArray(originalImageData.data);</pre>
+
+<h4> The = operator will not copy the whole image data object </h4>
+<pre class='blue'> var x = originalImageData; <span class='green'>// console.log(x);</span></pre>
+
+<h4> Manipulating the pixels</h4>
+
+<p> The <span class='inline-code'>imgData.data</span> array stores the image data in the following way: <span class='inline-code'>imgData.data = [r0, g0, b0, a0, r1, g1, b1, a1, r2, g2, b2, a2, ......, an]</span></p>
+
+<img src='imgData.png'/>
+
+<p> Here is a simple function to invert the colors of the image data object. </p>
+
+<pre class='blue'>function applyInversion(inputImageData) {
+  var outputImageData = copyImageData(inputImageData);
+  for (var i = 0; i < inputImageData.data.length; i+=4) {
+    outputImageData.data[i+0] = 255-inputImageData.data[i+0];
+    outputImageData.data[i+1] = 255-inputImageData.data[i+1];
+    outputImageData.data[i+2] = 255-inputImageData.data[i+2];
+    outputImageData.data[i+3] = inputImageData.data[i+3];
+  }
+  return outputImageData;
+}</pre>
+
+<h4> Downloading the image data as a picture file </h4>
+
+<pre class='blue'>var x = c.toDataURL('image/jpeg');
+var a = document.createElement('a');
+a.href = x;
+a.download = 'new.jpg';
+a.click();
+a.remove();</pre>
+
+</div>
+
+<div>https://hacks.mozilla.org/2011/12/faster-canvas-pixel-manipulation-with-typed-arrays/</div>
+
+<script></script>
+
+</html>
