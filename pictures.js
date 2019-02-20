@@ -1,6 +1,7 @@
 // change each pixel based on myInputArray
 function modify(inputImageData, myInputArray) {
 
+	var outputImageData = copyImageData(inputImageData)
 	var redPct = myInputArray[0];
 	var greenPct = myInputArray[1];
 	var bluePct = myInputArray[2];
@@ -19,13 +20,11 @@ function modify(inputImageData, myInputArray) {
 		let g2 = g1-(grayPct/100)*(g1-x);
 		let b2 = b1-(grayPct/100)*(b1-x);
 		// apply inversion
-		inputImageData.data[i+0] = r2+(255-2*r2)*invertPct/100;
-		inputImageData.data[i+1] = g2+(255-2*g2)*invertPct/100;
-		inputImageData.data[i+2] = b2+(255-2*b2)*invertPct/100;
-		inputImageData.data[i+3] = 255; 
+		outputImageData.data[i+0] = r2+(255-2*r2)*invertPct/100;
+		outputImageData.data[i+1] = g2+(255-2*g2)*invertPct/100;
+		outputImageData.data[i+2] = b2+(255-2*b2)*invertPct/100;
 	}
-	
-	return inputImageData;
+	return outputImageData;
 }
 
 // it always assumes pct is 50. that why when i rest on 70-70-30 for example, it warps the colors
@@ -40,15 +39,39 @@ function abc(val, pct) {
 }
 
 // this function applies a 3x3 linear blur to a javascript imgData object
-function applyBlur(inputImageData, outputImageData) {
+function applyBlur(inputImageData, n) {
 
+	// in leaving along opacity, we risk creating an outline in images where transparent sections are (0, 0, 0, 0)
 	var w = inputImageData.width;
 	var h = inputImageData.height;
-
-	var matrixSize = 3;
-	var v = 1/9;
-	var matrix = [[v*1, v*1, v*1], [v*1, v*1, v*1], [v*1, v*1, v*1]];
-	var offset = Math.floor(matrixSize/2);
+	var outputImageData = copyImageData(inputImageData);
+	var k = (n-1)/2;
+	var sigma = 0.84089642;
+	var matrix = [];
+	var matrixSum = 0;
+	var offset = Math.floor(n/2);
+	
+	// establish values for the matrix
+	for (var j = 0; j < n; j++) {
+		var row = [];
+		for (var i = 0; i < n; i++) {
+			let a = 1/(2*Math.PI*Math.pow(sigma,2));
+			let b = Math.pow(j-k,2) + Math.pow(i-k,2);
+			let c = 2*Math.pow(sigma,2);
+			let d = a*Math.exp(-b/c);
+			matrixSum += d;
+			row.push(d);
+		}
+		matrix.push(row);
+	}
+	
+	// standardize the matrix so the sum of its elements equals 1
+	for (var j = 0; j < n; j++) {
+		for (var i = 0; i < n; i++) {
+			matrix[i][j] /= matrixSum;
+		}
+	}
+	console.log(matrix);
 	
 	for (var i = 0; i < inputImageData.data.length; i+=4) {
 	
@@ -83,7 +106,7 @@ function applyBlur(inputImageData, outputImageData) {
 		outputImageData.data[i+0] = rTotal;  
 		outputImageData.data[i+1] = gTotal;
 		outputImageData.data[i+2] = bTotal;
-		outputImageData.data[i+3] = 255;
+		//outputImageData.data[i+3] = inputImageData.data[i+3];
 	}
 	return outputImageData;	
 }
@@ -107,12 +130,12 @@ function applyThreshold(inputImageData, outputImageData, threshold) {
 			outputImageData.data[i+0] = 0;  
 			outputImageData.data[i+1] = 0;
 			outputImageData.data[i+2] = 0;
-			outputImageData.data[i+3] = 255;		
+			//outputImageData.data[i+3] = 255;		
 		} else {
 			outputImageData.data[i+0] = 255;  
 			outputImageData.data[i+1] = 255;
 			outputImageData.data[i+2] = 255;
-			outputImageData.data[i+3] = 255;			
+			//outputImageData.data[i+3] = 255;			
 		}
 	}
 	return outputImageData;
@@ -141,7 +164,7 @@ function restoreColors(inputImageData, originalImageData) {
 			imgData.data[i+0] = originalImageData.data[i+0];  
 			imgData.data[i+1] = originalImageData.data[i+1];
 			imgData.data[i+2] = originalImageData.data[i+2];
-			imgData.data[i+3] = 255;			
+			//imgData.data[i+3] = 255;			
 		}
 	}
 	return imgData;
@@ -210,7 +233,7 @@ function applyContrast(inputImageData, outputImageData) {
 
 		}	
 
-		outputImageData.data[i+3] = 255;
+		//outputImageData.data[i+3] = 255;
 	}
 	return outputImageData;	
 }
@@ -273,7 +296,7 @@ function applySobel(inputImageData, outputImageData) {
 		outputImageData.data[i+0] = G;  
 		outputImageData.data[i+1] = G;
 		outputImageData.data[i+2] = G;
-		outputImageData.data[i+3] = 255;
+		//outputImageData.data[i+3] = 255;
 	}
 	return outputImageData;	
 }

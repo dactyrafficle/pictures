@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
-<title>drag/drop an img</title>
 
 <head>
 
-<link rel="stylesheet" type="text/css" href="pictures.css?x=" + Math.random()>
-<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-<style></style>
+	<title>drag/drop an img</title>
+	<link rel="stylesheet" type="text/css" href="pictures.css?x=" + Math.random()>
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<style></style>
 
 </head>
 
@@ -23,7 +23,7 @@
 		<a style='margin: 0px 5px 0px 10px; text-decoration: none;' href='#'>Here</a>
 		<span>|</span>
 		<a style='margin: 0px 10px 0px 5px; text-decoration: none;' href='https://github.com/dactyrafficle/pictures'>Github</a>
-		<span>|<span>
+		<span>|</span>
 		<a style='margin: 0px 5px 0px 10px; text-decoration: none;' href='notes.html'>Notes</a>
 	</p>
  
@@ -46,6 +46,11 @@
 	</div>
 	
 	<div class='mySidebarContents'>
+		<div class='mod-headers'>Blur: 5x5 Gaussian</div>
+		<button id='myBlurButton'>go!</button>
+	</div>
+	
+	<div class='mySidebarContents'>
 		<div class='mod-headers'>Pointillize</div>
 		<button id='pointillizeStart'>start</button>
 		<button id='pointillizeStop'>stop</button>
@@ -54,11 +59,6 @@
 	<div class='mySidebarContents'>
 		<div class='mod-headers'>Triangulate, algo: <a href='https://github.com/snorpey/triangulation' target='_blank'>here</a></div>
 		<button id='triangulate'>start</button>
-	</div>
-
-	<div class='mySidebarContents'>
-		<div class='mod-headers'>Blur (3x3 linear)</div>
-		<button id='myBlurButton'>go!</button>
 	</div>
 	
 	<div class='mySidebarContents'>

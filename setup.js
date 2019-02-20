@@ -144,10 +144,8 @@ var draw;
 	
 	// blur event listener
 	document.getElementById('myBlurButton').addEventListener('click', function() {
-		var x = returnCanvasImageData(c, ctx); // return an imgdata object
-		var z = ctx.createImageData(x);
-		z.data.set(x.data);
-		var y = applyBlur(x, z); 									// accepts and imgdata object and returns an imgdata object
+		var x = returnCanvasImageData(c, ctx);
+		var y = applyBlur(x, 5);
 		ctx.putImageData(y, 0, 0);
 		
 		// updating workingImageData
@@ -193,7 +191,7 @@ var draw;
 		restoreMyInputs();
 	});
 	
-	// intensity gradient event listener
+	// edge detection event listener
 	document.getElementById('mySobelButton').addEventListener('click', function() {
 		var x = returnCanvasImageData(c, ctx); // return an imgdata object
 		var z = ctx.createImageData(x);
@@ -207,7 +205,7 @@ var draw;
 		restoreMyInputs();
 	});
 	
- 	// intensity gradient event listener
+ 	// pixelation  event listener
 	document.getElementById('myPixelationButton').addEventListener('click', function() {
 		var x = returnCanvasImageData(c, ctx); // return an imgdata object
 		var z = ctx.createImageData(x);
@@ -227,6 +225,8 @@ function placeImageOnCanvasAndSetOriginalImgData(container, canvas, context, myT
 	
 	// clear the contents of dropZone
 	myDropZoneText.style.display = 'none';
+	
+	
 	
 	console.log('original size: ' + originalImageWidth + ' x ' + originalImageHeight);
 	var imageWidth = originalImageWidth;
@@ -267,6 +267,9 @@ function placeImageOnCanvasAndSetOriginalImgData(container, canvas, context, myT
 	// sets both original and working
 	originalImageData = context.getImageData(0, 0, canvas.width, canvas.height);
 	workingImageData = context.getImageData(0, 0, canvas.width, canvas.height);
+	
+	console.log(originalImageData);
+	
 }
 // basic validation
 function isValidImageFileType(fileType) {
@@ -286,7 +289,7 @@ function updateInputArray() {
 		inputs[i].nextElementSibling.textContent = inputs[i].value;
 		myInputArray[i] = inputs[i].value;
 	}
-	console.log(myInputArray);
+	//console.log(myInputArray);
 }
 function restoreCanvas(context) {
 	workingImageData.data.set(originalImageData.data);
@@ -303,7 +306,7 @@ function restoreMyInputs() {
 		inputs[i].nextElementSibling.textContent = inputs[i].value;
 		myInputArray[i] = inputs[i].value;
 	}
-	console.log(myInputArray);
+	//console.log(myInputArray);
 }
 // pointillization functions
 function pointillize(canvas, context) {
@@ -329,7 +332,7 @@ function pointillize(canvas, context) {
 		var r = imgData.data[loc];
 		var g = imgData.data[loc+1];
 		var b = imgData.data[loc+2];
-		var a = 0.5;
+		var a = (imgData.data[loc+3]/255)*0.5;  // this way, if alpha = 0, it will stay zero
 		var radius = Math.floor(2+Math.random()*3);
 		//radius = 1;
 		
