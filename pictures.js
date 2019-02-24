@@ -140,20 +140,14 @@ function applySharpen(inputImageData, n, sd, threshold) {
 	return outputImageData;
 }
 
-// this function tests pixels against a threshold
-
 function applyThreshold(inputImageData, threshold) {
-	
 	var outputImageData = copyImageData(inputImageData);
 	var w = inputImageData.width;
 	var h = inputImageData.height;
-	
 	if (!arguments[1]) {
 		threshold = 50;
 	}
-	
 	for (var i = 0; i < inputImageData.data.length; i+=4) {
-	
 		// if any of r,g or b is less than threshold, then we keep them, else, get rid of them
 		let r1 = inputImageData.data[i+0];  
 		let g1 = inputImageData.data[i+1];
@@ -171,49 +165,20 @@ function applyThreshold(inputImageData, threshold) {
 	return outputImageData;
 }
 
-// this function reassigns the color of any non-255 pixel
-
-function restoreColors(inputImageData, originalImageData) {
-
-	// reassign, not copy, the image data object
-	var imgData = inputImageData;
-	var w = imgData.width;
-	var h = imgData.height;
-
-	var	threshold = 250;
-
-	for (var i = 0; i < imgData.data.length; i+=4) {
-	
-		// if any of r,g or b is greater than threshold, then we set all of them to black, else, white
-		let r1 = imgData.data[i+0];  
-		let g1 = imgData.data[i+1];
-		let b1 = imgData.data[i+2];
-		if (r1 > threshold && g1 > threshold && b1 > threshold) {
-			// do nothing
-		} else {
-			imgData.data[i+0] = originalImageData.data[i+0];  
-			imgData.data[i+1] = originalImageData.data[i+1];
-			imgData.data[i+2] = originalImageData.data[i+2];
-			//imgData.data[i+3] = 255;			
-		}
-	}
-	return imgData;
-}
-
-// this function uses inputImageData, does a 3x3 matrix, scales the sum of absolute diff to those 9 cells, and then returns a value to outputImageData
-// if I output directly to inputImageData, I'm changing the imgData thats being used as an argument before im done with it, skewing the results
-
-function applyContrast(inputImageData, outputImageData) {
-	
-	// reassign, not copy, the image data object
-	var imgData = inputImageData;
-	var w = imgData.width;
-	var h = imgData.height;
+function applyContrast(inputImageData, threshold) {
+	var outputImageData = copyImageData(inputImageData);
+	var w = inputImageData.width;
+	var h = inputImageData.height;
 
 	var matrixSize = 3;
 	var offset = Math.floor(matrixSize/2);
 	
-	for (var i = 0; i < imgData.data.length; i+=4) {
+	threshold = parseInt(threshold);
+	if (arguments.length < 1 || threshold === 0) {
+		return outputImageData;
+	}
+	
+	for (var i = 0; i < inputImageData.data.length; i+=4) {
 	
 		// for each element, get the x-y coordinates
 		var pixel = Math.floor(i/4);
@@ -236,9 +201,9 @@ function applyContrast(inputImageData, outputImageData) {
 				var loc = x1 + y1*w;
 				loc = Math.min(Math.max(loc, 0), w*h-1);
 				
-				rTotal += Math.abs(imgData.data[4*loc+0]-imgData.data[i+0]);
-				gTotal += Math.abs(imgData.data[4*loc+1]-imgData.data[i+1]);
-				bTotal += Math.abs(imgData.data[4*loc+2]-imgData.data[i+2]);
+				rTotal += Math.abs(inputImageData.data[4*loc+0]-inputImageData.data[i+0]);
+				gTotal += Math.abs(inputImageData.data[4*loc+1]-inputImageData.data[i+1]);
+				bTotal += Math.abs(inputImageData.data[4*loc+2]-inputImageData.data[i+2]);
 			}
 		}
 		
@@ -246,36 +211,23 @@ function applyContrast(inputImageData, outputImageData) {
 		gTotal = gTotal/8;
 		bTotal = bTotal/8;
 		
-		var threshold = 20;
 		if (rTotal > threshold || gTotal > threshold || bTotal > threshold) {
-			var r1 = imgData.data[i+0];
-			var g1 = imgData.data[i+1];
-			var b1 = imgData.data[i+2];
-			let w = r1 + g1 + b1;
-			w = Math.floor(w/3);
-			outputImageData.data[i+0] = w;  
-			outputImageData.data[i+1] = w;
-			outputImageData.data[i+2] = w;
+			outputImageData.data[i+0] = 0;  
+			outputImageData.data[i+1] = 0;
+			outputImageData.data[i+2] = 0;
 		} else {
 			outputImageData.data[i+0] = 255;  
 			outputImageData.data[i+1] = 255;
 			outputImageData.data[i+2] = 255;			
-
 		}	
-
-		//outputImageData.data[i+3] = 255;
 	}
 	return outputImageData;	
 }
 
-
-// this one is interesting. i like it. but it needs an 'edge thinner'
+// sorbel on compterphile:  https://www.youtube.com/watch?v=uihBwtPIBxM
+// sobel on wikipedia:			https://en.wikipedia.org/wiki/Sobel_operator
 function applySobel(inputImageData, outputImageData) {
-	
-	// sorbel on compterphile:  https://www.youtube.com/watch?v=uihBwtPIBxM
-
-	// sobel on wikipedia:			https://en.wikipedia.org/wiki/Sobel_operator
-	
+	var outputImageData = copyImageData(inputImageData);	
 	var w = inputImageData.width;
 	var h = inputImageData.height;
 		
@@ -283,7 +235,6 @@ function applySobel(inputImageData, outputImageData) {
 	var Gx = [[-1, 0, 1],[-2, 0, 2],[-1, 0, 1]];
 	var Gy = [[-1, -2, -1],[0, 0, 0],[1, 2, 1]];
 	var offset = Math.floor(matrixSize/2);
-
 
 	for (var i = 0; i < inputImageData.data.length; i+=4) {
 	
@@ -316,17 +267,12 @@ function applySobel(inputImageData, outputImageData) {
 				
 				gx += intensity*Gx[j][k];
 				gy += intensity*Gy[j][k];
-				
 			}
 		}
-		
 		G = Math.sqrt(Math.pow(gx, 2) + Math.pow(gy, 2));
-		
-		// write over the elements
 		outputImageData.data[i+0] = G;  
 		outputImageData.data[i+1] = G;
 		outputImageData.data[i+2] = G;
-		//outputImageData.data[i+3] = 255;
 	}
 	return outputImageData;	
 }
@@ -335,10 +281,8 @@ function applyTruncate(inputImageData, n) {
 	var outputImageData = copyImageData(inputImageData);
 	var w = inputImageData.width;
 	var h = inputImageData.height;
-
 	n = parseInt(n);
 	if (!arguments[1] || n === 1) {
-		console.log('nothing to see here');
 		return outputImageData;
 	}
 	for (var i = 0; i < inputImageData.data.length; i+=4) {
@@ -349,66 +293,50 @@ function applyTruncate(inputImageData, n) {
 	return outputImageData;
 }
 
-// there has to be a better way for me to do this; and there are some quirks, ie. the edges
 function applyPixelation(inputImageData, s) {
 	var outputImageData = copyImageData(inputImageData);
 	var w = inputImageData.width;
 	var h = inputImageData.height;
-
 	s = parseInt(s);
 	if (!arguments[1] || s === 1) {
-		console.log('nothing to see here');
 		return outputImageData;
 	}
-	console.log(s);
-	
-	// easier to start with x-y in this one
 	for (var j = 0; j < h; j += s) {
 		for (var i = 0; i < w; i += s) {
-			
 			var rTotal = 0;
 			var gTotal = 0;
 			var bTotal = 0;
-			
+			// calculate the values
 			for (var k = 0; k < s; k++) {
 				for (var f = 0; f < s; f++) {
-					var x = i + k;  // x-y is the position of this pixel relative to the image
-					x = Math.min(Math.max(x, 0), w-1);  // constrain it
+					var x = i + k;
+					x = Math.min(Math.max(x, 0), w-1);  // constrain x
 					var y = j + f;
 					y = Math.min(Math.max(y, 0), h-1);
-					var pixel = x + y*w;  // pixel is the pixels number
+					var pixel = x + y*w;
 					var loc = 4*pixel;
-					
-					// i need to contrain the edge cases, because all these pixels outside turn black
-					
-					
 					rTotal += inputImageData.data[loc+0];
 					gTotal += inputImageData.data[loc+1];
 					bTotal += inputImageData.data[loc+2];
-					
 				}
 			}
-			
 			rTotal = rTotal / (s*s);
 			gTotal = gTotal / (s*s);
 			bTotal = bTotal / (s*s);
-			
+			// set the pixels
 			for (var k = 0; k < s; k++) {
 				for (var f = 0; f < s; f++) {
-					var x = i + k;  // x-y is the position of this pixel relative to the image
+					var x = i + k; 
 					x = Math.min(Math.max(x, 0), w-1);
 					var y = j + f;
 					y = Math.min(Math.max(y, 0), h-1);
-					var pixel = x + y*w;  // pixel is the pixels number
+					var pixel = x + y*w;
 					var loc = 4*pixel;
-					
 					outputImageData.data[loc+0] = rTotal;
 					outputImageData.data[loc+1] = gTotal;
 					outputImageData.data[loc+2] = bTotal;
-					
 				}
-			}			
-			
+			}				
 		}
 	}
 	return outputImageData;	
@@ -419,7 +347,12 @@ function applyCrayonEffect(inputImageData) {
 	var outputImageData = copyImageData(inputImageData)
 	
 	for (var i = 0; i < inputImageData.data.length; i+=4) {
-		outputImageData.data[i+3] = 100+Math.random()*100;
+		if (inputImageData.data[i+2] > 100) {
+			outputImageData.data[i+0] = 255;
+			outputImageData.data[i+1] = 255;
+			outputImageData.data[i+2] = 255;
+			outputImageData.data[i+3] = 255;
+		}
 	}
 	return outputImageData;
 }

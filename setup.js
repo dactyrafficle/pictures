@@ -8,7 +8,7 @@ var draw;
 (function() {
 	
 	// initializing	
-	myInputArray = [50, 50, 50, 0, 0, 0, 0, 255, 1, 1];
+	myInputArray = [50, 50, 50, 0, 0, 0, 0, 255, 1, 1, 0];
 	myDropZone = document.getElementById('myDropZone');
 	myThumbnailImage = document.getElementById('myThumbnailImage');
 	myDropZoneText = document.getElementById('myDropZoneText');
@@ -159,6 +159,14 @@ var draw;
 		ctx.putImageData(x, 0, 0);	
 	});
 	
+	// tmask (contrast) event listener
+	myInputs[10].addEventListener('change', function() {
+		updateInputArray();
+		let thresh = myInputArray[10];
+		var x = applyContrast(workingImageData, thresh);
+		ctx.putImageData(x, 0, 0);	
+	});
+	
 	// adding event listeners for the pointillization buttons
 	document.getElementById('pointillizeStart').addEventListener('click', function() {
 		pointillize(c, ctx);
@@ -188,57 +196,19 @@ var draw;
 			});
 	});
 	
-	// restore colors event listener
-	document.getElementById('myRestoreColorsButton').addEventListener('click', function() {
-		var x = returnCanvasImageData(c, ctx);	// return an imgdata object
-		var y = restoreColors(x, originalImageData); 						// accepts and imgdata object and returns an imgdata object
-		ctx.putImageData(y, 0, 0);
-		restoreMyInputs();
-	});
-	
-	// contrast, this one is hard
-	document.getElementById('myContrastButton').addEventListener('click', function() {
-		var x = returnCanvasImageData(c, ctx);	// return an imgdata object
-		var z = ctx.createImageData(x);
-		z.data.set(x.data);
-		var y = applyContrast(x, z); 						// accepts and imgdata object and returns an imgdata object
-		//restoreMyInputs();
-		ctx.putImageData(y, 0, 0);
-		
-		// updating workingImageData
-		var s = returnCanvasImageData(c, ctx);
-		workingImageData.data.set(s.data);
-		restoreMyInputs();
-	});
-	
 	// edge detection event listener
 	document.getElementById('mySobelButton').addEventListener('click', function() {
-		var x = returnCanvasImageData(c, ctx); // return an imgdata object
+		var x = returnCanvasImageData(c, ctx);
 		var z = ctx.createImageData(x);
 		z.data.set(x.data);
-		var y = applySobel(x, z);		// accepts and imgdata object and returns an imgdata object
+		var y = applySobel(x, z);		
 		ctx.putImageData(y, 0, 0);
-		
-		// updating workingImageData
-		var s = returnCanvasImageData(c, ctx);
-		workingImageData.data.set(s.data);
-		restoreMyInputs();
-	});
-	
- 	// crayon effect event listener
-	document.getElementById('myCrayonButton').addEventListener('click', function() {
-
-		var x = applyCrayonEffect(workingImageData);		// accepts and imgdata object and returns an imgdata object
-		ctx.putImageData(x, 0, 0);
-		
-		// updating workingImageData
-		var s = returnCanvasImageData(c, ctx);
-		workingImageData.data.set(s.data);
-		restoreMyInputs();
 	});	
 	
-	
 }());  // closing initialization
+
+
+
 // prepare the canvas after dropping image file
 function placeImageOnCanvasAndSetOriginalImgData(container, canvas, context, myThumbnailImage, tempImage, originalImageWidth, originalImageHeight) {
 	
@@ -323,6 +293,7 @@ function restoreMyInputs() {
 	inputs[7].value = 255;
 	inputs[8].value = 1;
 	inputs[9].value = 1;
+	inputs[10].value = 0;
 	
 	for (var i = 0; i < inputs.length; i++) {
 		inputs[i].nextElementSibling.textContent = inputs[i].value;

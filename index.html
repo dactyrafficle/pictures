@@ -57,38 +57,15 @@
 	<div class='mySidebarContents'>
 		<div><span class='sliderNames'>trunc</span><input class='myInputs' type='range' min='1' max='50' value='1' id='myInputTrunc'/><span id='myInputTruncValue'>1</span></div>
 		<div><span class='sliderNames'>pixel</span><input class='myInputs' type='range' min='1' max='50' value='1' id='myInputPixel'/><span id='myInputPixelValue'>1</span></div>
-	</div>
-
-	<div class='mySidebarContents'>
-		<div class='mod-headers'>Pointillize</div>
-		<button id='pointillizeStart'>start</button>
-		<button id='pointillizeStop'>stop</button>
+		<div><span class='sliderNames'>tmask</span><input class='myInputs' type='range' min='0' max='255' value='0' id='myInputTrunc'/><span id='myInputTruncValue'>0</span></div>
 	</div>
 	
 	<div class='mySidebarContents'>
-		<div class='mod-headers'>Triangulate, algo: <a href='https://github.com/snorpey/triangulation' target='_blank'>here</a></div>
-		<button id='triangulate'>start</button>
+		<div class='mod-headers'>Sobel:<button id='mySobelButton'>preview</button></div>
+		<div class='mod-headers'>Pointillize<button id='pointillizeStart'>start</button><button id='pointillizeStop'>stop</button></div>
+		<div class='mod-headers'>Triangulate, algo: <a href='https://github.com/snorpey/triangulation' target='_blank'>here</a><button id='triangulate'>start</button></div>
 	</div>
 	
-	<div class='mySidebarContents'>
-		<div class='mod-headers'>Restore colors (of non-255 pixels)</div>
-		<button id='myRestoreColorsButton'>go!</button>
-	</div>
-	
-	<div class='mySidebarContents'>
-		<div class='mod-headers'>Contrast: 3x3 threshold mask</div>
-		<button id='myContrastButton'>go!'</button>
-	</div>
-	
-	<div class='mySidebarContents'>
-		<div class='mod-headers'>Sobel edge detection</div>
-		<button id='mySobelButton'>apply!</button>
-	</div>
-	
-	<div class='mySidebarContents'>
-		<div class='mod-headers'>Crayons</div>
-		<button id='myCrayonButton'>preview</button>
-	</div>
 </div>
 
 <script src='setup.js?x=' + Math.random()></script>
