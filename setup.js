@@ -8,12 +8,13 @@ var draw;
 (function() {
 	
 	// initializing	
-	myInputArray = [50, 50, 50, 0, 0];
+	myInputArray = [50, 50, 50, 0, 0, 0, 0, 255, 1, 1];
 	myDropZone = document.getElementById('myDropZone');
 	myThumbnailImage = document.getElementById('myThumbnailImage');
 	myDropZoneText = document.getElementById('myDropZoneText');
- 	 c = document.getElementById('myCanvas');
- 	 ctx = c.getContext('2d');
+	c = document.getElementById('myCanvas');
+	ctx = c.getContext('2d');
+	
   myDropZone.addEventListener('dragenter', function(e) {
     e.stopPropagation();
     e.preventDefault();
@@ -32,9 +33,9 @@ var draw;
   myDropZone.addEventListener('drop', function(e) {
   
 		// 1. stop the default behavior of drop
-	e.stopPropagation();
-    	e.preventDefault();
-    	this.style.border = '2px solid #ddd';
+		e.stopPropagation();
+		e.preventDefault();
+		this.style.border = '2px solid #ddd';
 		// 2. capture the file
 		var file = e.dataTransfer.files[0];
 		console.log('info about the drop event:');
@@ -73,16 +74,7 @@ var draw;
 					// initializes the canvas: clear and resize dropzone + canvas, set thumbnail and capture original image data
 					placeImageOnCanvasAndSetOriginalImgData(myDropZone, c, ctx, myThumbnailImage, tempImage, originalImageWidth, originalImageHeight);
 					restoreMyInputs();
-					
-					// make a copy of workingImageData
-					//var x = ctx.createImageData(workingImageData);
-					//x.data.set(workingImageData.data);
-					
-					// feed it thru the meat grinder
-					//var y = modify(x, myInputArray);
-					//ctx.putImageData(y, 0, 0);
-					
-					
+						
 				}
 			}, false);
 			// 6 pass file to reader which triggers what we defined in step 5
@@ -91,27 +83,81 @@ var draw;
 		
   }, false); // closing the drop callback
 	
-	// restore canvas event listener
-	document.getElementById('restore').addEventListener('click', function() {
+	// this button saves the current canvas to workingImageData
+	document.getElementById('myApplyChangesButton').addEventListener('click', function() {
 		stopPointillization();
-		restoreCanvas(ctx);
+		workingImageData = returnCanvasImageData(c, ctx);
+		restoreMyInputs();
+	});
+	
+	// this button will restore the workingImageData
+	document.getElementById('myUndoChangesButton').addEventListener('click', function() {
+		stopPointillization();
+		ctx.putImageData(workingImageData, 0, 0);
+		restoreMyInputs();
+	});	
+	
+	// restore canvas event listener
+	document.getElementById('myRestoreButton').addEventListener('click', function() {
+		stopPointillization();
+		workingImageData = copyImageData(originalImageData);
+		ctx.putImageData(workingImageData, 0, 0);
 		restoreMyInputs();
 	});
 	
 	
-	// basic mods event listener
 	var myInputs = document.getElementsByClassName('myInputs');
-	for (var i = 0; i < myInputs.length; i++) {
+	
+	// basic mods event listener
+	for (var i = 0; i < 5; i++) {
 		myInputs[i].addEventListener('change', function() {
 			updateInputArray();
-			// make a copy of workingImageData
-			var x = ctx.createImageData(workingImageData);
-			x.data.set(workingImageData.data);
-			// feed it thru the meat grinder
-			var y = modify(x, myInputArray);
-			ctx.putImageData(y, 0, 0);
+			var x = modify(workingImageData, myInputArray);
+			ctx.putImageData(x, 0, 0);
 		});
 	}
+
+	// blur event listener
+	myInputs[5].addEventListener('change', function() {
+		updateInputArray();
+		let n = 5;
+		let sd = myInputArray[5]/10;
+		var x = applyBlur(workingImageData, n, sd);
+		ctx.putImageData(x, 0, 0);	
+	});
+
+	// sharpen event listener
+	myInputs[6].addEventListener('change', function() {
+		updateInputArray();
+		let n = 5;
+		let sd = myInputArray[6]/10;
+		var x = applySharpen(workingImageData, n, sd);
+		ctx.putImageData(x, 0, 0);	
+	});	
+	
+	// threshold event listener
+	myInputs[7].addEventListener('change', function() {
+		updateInputArray();
+		let thresh = myInputArray[7];
+		var x = applyThreshold(workingImageData, thresh);
+		ctx.putImageData(x, 0, 0);	
+	});
+	
+	// truncate event listener
+	myInputs[8].addEventListener('change', function() {
+		updateInputArray();
+		let n = myInputArray[8];
+		var x = applyTruncate(workingImageData, n);
+		ctx.putImageData(x, 0, 0);	
+	});
+	
+	// pixelate event listener
+	myInputs[9].addEventListener('change', function() {
+		updateInputArray();
+		let s = myInputArray[9];
+		var x = applyPixelation(workingImageData, s);
+		ctx.putImageData(x, 0, 0);	
+	});
 	
 	// adding event listeners for the pointillization buttons
 	document.getElementById('pointillizeStart').addEventListener('click', function() {
@@ -140,32 +186,6 @@ var draw;
 				ctx.putImageData(x, 0, 0 );
 				//workingImageData.data.set(workingImageData.data); // in this case, i'm copying the local workingImageData to the global one
 			});
-	});
-	
-	// blur event listener
-	document.getElementById('myBlurButton').addEventListener('click', function() {
-		var x = returnCanvasImageData(c, ctx);
-		var y = applyBlur(x, 5);
-		ctx.putImageData(y, 0, 0);
-		
-		// updating workingImageData
-		var s = returnCanvasImageData(c, ctx);
-		workingImageData.data.set(s.data);
-		restoreMyInputs();
-	});
-	
-	// threshold event listener
-	document.getElementById('myThresholdButton').addEventListener('click', function() {
-		var x = returnCanvasImageData(c, ctx);	// return an imgdata object
-		var z = ctx.createImageData(x);
-		z.data.set(x.data);
-		var y = applyThreshold(x, z); 								// accepts and imgdata object and returns an imgdata object
-		ctx.putImageData(y, 0, 0);
-		
-		// updating workingImageData
-		var s = returnCanvasImageData(c, ctx);
-		workingImageData.data.set(s.data);	
-		restoreMyInputs();
 	});
 	
 	// restore colors event listener
@@ -205,19 +225,18 @@ var draw;
 		restoreMyInputs();
 	});
 	
- 	// pixelation  event listener
-	document.getElementById('myPixelationButton').addEventListener('click', function() {
-		var x = returnCanvasImageData(c, ctx); // return an imgdata object
-		var z = ctx.createImageData(x);
-		z.data.set(x.data);
-		var y = applyPixelation(x, z);		// accepts and imgdata object and returns an imgdata object
-		ctx.putImageData(y, 0, 0);
+ 	// crayon effect event listener
+	document.getElementById('myCrayonButton').addEventListener('click', function() {
+
+		var x = applyCrayonEffect(workingImageData);		// accepts and imgdata object and returns an imgdata object
+		ctx.putImageData(x, 0, 0);
 		
 		// updating workingImageData
 		var s = returnCanvasImageData(c, ctx);
 		workingImageData.data.set(s.data);
 		restoreMyInputs();
-	});
+	});	
+	
 	
 }());  // closing initialization
 // prepare the canvas after dropping image file
@@ -291,23 +310,26 @@ function updateInputArray() {
 	}
 	//console.log(myInputArray);
 }
-function restoreCanvas(context) {
-	workingImageData.data.set(originalImageData.data);
-	context.putImageData(workingImageData, 0, 0);	
-}
+
 function restoreMyInputs() {
   var inputs = document.getElementsByClassName('myInputs');
+	inputs[0].value = 50;
+	inputs[1].value = 50;
+	inputs[2].value = 50;
+	inputs[3].value = 0;
+	inputs[4].value = 0;
+	inputs[5].value = 0;	
+	inputs[6].value = 0;
+	inputs[7].value = 255;
+	inputs[8].value = 1;
+	inputs[9].value = 1;
+	
 	for (var i = 0; i < inputs.length; i++) {
-		if (i < 3) {
-			inputs[i].value = 50;
-		} else {
-			inputs[i].value = 0;
-		}
 		inputs[i].nextElementSibling.textContent = inputs[i].value;
 		myInputArray[i] = inputs[i].value;
 	}
-	//console.log(myInputArray);
 }
+
 // pointillization functions
 function pointillize(canvas, context) {
   if (draw) {
@@ -334,12 +356,10 @@ function pointillize(canvas, context) {
 		var b = imgData.data[loc+2];
 		var a = (imgData.data[loc+3]/255)*0.5;  // this way, if alpha = 0, it will stay zero
 		var radius = Math.floor(2+Math.random()*3);
-		//radius = 1;
 		
-		ctx.beginPath();
-		ctx.arc(x, y, radius, 0, 2*Math.PI);
-		ctx.fillStyle = 'rgb(' + r + ',' + g + ', ' + b + ',' + a + ')';
-		ctx.fill()
+		fill(ctx, r, g, b, a);
+		ellipse(ctx, x, y, radius);
+
 	}
 	}, 50);  // closing setInterval()
 }
@@ -348,10 +368,20 @@ function stopPointillization() {
 	
 	//i need to save the canvas data as an imgData object
 	
-	workingImageData = ctx.getImageData(0, 0, c.width, c.height); // very interesting!!!
+	//workingImageData = ctx.getImageData(0, 0, c.width, c.height); // very interesting!!!
 }
 // blur function returns an image data object
 function returnCanvasImageData(canvas, context) {
 	x = context.getImageData(0, 0, canvas.width, canvas.height);
 	return x;
+}
+
+function fill(ctx, r, g, b, a) {
+	ctx.fillStyle = 'rgb(' + r + ',' + g + ', ' + b + ',' + a + ')';
+}
+
+function ellipse(ctx, x, y, rx) {
+	ctx.beginPath();
+	ctx.arc(x, y, rx, 0, 2*Math.PI);
+	ctx.fill()	
 }

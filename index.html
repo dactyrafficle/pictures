@@ -2,12 +2,11 @@
 <html>
 
 <head>
-
+	<meta charset="UTF-8">
 	<title>drag/drop an img</title>
 	<link rel="stylesheet" type="text/css" href="pictures.css?x=" + Math.random()>
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 	<style></style>
-
 </head>
 
 <div id='myMain' class='myMain'>
@@ -20,9 +19,9 @@
 <div id='mySidebar' class='mySidebar'>
 
 	<p>
-		<a style='margin: 0px 5px 0px 10px; text-decoration: none;' href='#'>Here</a>
+		<a style='margin: 0px 10px 0px 10px; text-decoration: none;' href='#'>Here</a>
 		<span>|</span>
-		<a style='margin: 0px 10px 0px 5px; text-decoration: none;' href='https://github.com/dactyrafficle/pictures'>Github</a>
+		<a style='margin: 0px 10px 0px 10px; text-decoration: none;' href='https://github.com/dactyrafficle/pictures'>Github</a>
 		<span>|</span>
 		<a style='margin: 0px 5px 0px 10px; text-decoration: none;' href='notes.html'>Notes</a>
 	</p>
@@ -36,8 +35,12 @@
 	</div>
  
 	<div class='mySidebarContents'>
-		<div class='mod-headers'>Basic</div>
-		<button id='restore'>restore</button>
+		<button id='myApplyChangesButton'>Apply</button>
+		<button id='myUndoChangesButton'>Undo</button>
+		<button id='myRestoreButton'>Restore</button>
+	</div>
+ 
+	<div class='mySidebarContents'>
 		<div><span class='sliderNames'>red</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myInputRed'/><span id='myInputRedValue'>50</span></div>
 		<div><span class='sliderNames'>green</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myInputGreen'/><span id='myInputGreenValue'>50</span></div>
 		<div><span class='sliderNames'>blue</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myInputBlue'/><span id='myInputBlueValue'>50</span></div>
@@ -46,10 +49,16 @@
 	</div>
 	
 	<div class='mySidebarContents'>
-		<div class='mod-headers'>Blur: 5x5 Gaussian</div>
-		<button id='myBlurButton'>go!</button>
+		<div><span class='sliderNames'>blur</span><input class='myInputs' type='range' min='0' max='50' value='0' id='myInputBlur'/><span id='myInputBlurValue'>0</span></div>
+		<div><span class='sliderNames'>sharp</span><input class='myInputs' type='range' min='0' max='50' value='0' id='myInputSharpen'/><span id='myInputSharpenValue'>0</span></div>
+		<div><span class='sliderNames'>thresh</span><input class='myInputs' type='range' min='0' max='255' value='255' id='myInputThresh'/><span id='myInputThreshValue'>255</span></div>
 	</div>
-	
+
+	<div class='mySidebarContents'>
+		<div><span class='sliderNames'>trunc</span><input class='myInputs' type='range' min='1' max='50' value='1' id='myInputTrunc'/><span id='myInputTruncValue'>1</span></div>
+		<div><span class='sliderNames'>pixel</span><input class='myInputs' type='range' min='1' max='50' value='1' id='myInputPixel'/><span id='myInputPixelValue'>1</span></div>
+	</div>
+
 	<div class='mySidebarContents'>
 		<div class='mod-headers'>Pointillize</div>
 		<button id='pointillizeStart'>start</button>
@@ -62,18 +71,8 @@
 	</div>
 	
 	<div class='mySidebarContents'>
-		<div class='mod-headers'>Threshold</div>
-		<button id='myThresholdButton'>go!</button>
-	</div>
-	
-	<div class='mySidebarContents'>
 		<div class='mod-headers'>Restore colors (of non-255 pixels)</div>
 		<button id='myRestoreColorsButton'>go!</button>
-	</div>
-	
-	<div class='mySidebarContents'>
-		<div class='mod-headers'>Pixellate</div>
-		<button id='myPixelationButton'>go!</button>
 	</div>
 	
 	<div class='mySidebarContents'>
@@ -84,6 +83,11 @@
 	<div class='mySidebarContents'>
 		<div class='mod-headers'>Sobel edge detection</div>
 		<button id='mySobelButton'>apply!</button>
+	</div>
+	
+	<div class='mySidebarContents'>
+		<div class='mod-headers'>Crayons</div>
+		<button id='myCrayonButton'>preview</button>
 	</div>
 </div>
 

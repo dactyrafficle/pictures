@@ -14,8 +14,7 @@ function modify(inputImageData, myInputArray) {
 		let g1 = abc(inputImageData.data[i+1], greenPct/100);
 		let b1 = abc(inputImageData.data[i+2], bluePct/100);
 		// apply gray
-		let x = r1 + g1 + b1;
-		x = x/3;
+		let x = 0.2126*r1 + 0.7152*g1 + 0.0722*b1;
 		let r2 = r1-(grayPct/100)*(r1-x);
 		let g2 = g1-(grayPct/100)*(g1-x);
 		let b2 = b1-(grayPct/100)*(b1-x);
@@ -38,15 +37,23 @@ function abc(val, pct) {
 	}
 }
 
-// this function applies a 3x3 linear blur to a javascript imgData object
-function applyBlur(inputImageData, n) {
+function applyBlur(inputImageData, n, sd) {
 
-	// in leaving along opacity, we risk creating an outline in images where transparent sections are (0, 0, 0, 0)
+	var outputImageData = copyImageData(inputImageData);
 	var w = inputImageData.width;
 	var h = inputImageData.height;
-	var outputImageData = copyImageData(inputImageData);
 	var k = (n-1)/2;
-	var sigma = 0.84089642;
+	
+	if (!arguments[1]) {
+		n = 5;
+	}
+	if (arguments.length < 3) { // if sd === 0, then that triggers !arguments[2] to be true, how odd!
+		sd = 0.84089642;
+	}
+	if (sd == 0) {  // cannot use === because i need to keep sd a float
+		return outputImageData;
+	}
+	
 	var matrix = [];
 	var matrixSum = 0;
 	var offset = Math.floor(n/2);
@@ -55,9 +62,9 @@ function applyBlur(inputImageData, n) {
 	for (var j = 0; j < n; j++) {
 		var row = [];
 		for (var i = 0; i < n; i++) {
-			let a = 1/(2*Math.PI*Math.pow(sigma,2));
+			let a = 1/(2*Math.PI*Math.pow(sd,2));
 			let b = Math.pow(j-k,2) + Math.pow(i-k,2);
-			let c = 2*Math.pow(sigma,2);
+			let c = 2*Math.pow(sd,2);
 			let d = a*Math.exp(-b/c);
 			matrixSum += d;
 			row.push(d);
@@ -84,11 +91,11 @@ function applyBlur(inputImageData, n) {
 		var gTotal = 0;
 		var bTotal = 0;
 		
-		// loop over the surrounding pixels
+		// loop over surrounding pixels
 		for (var j = 0; j < matrix.length; j++) {
 			for (var k = 0; k < matrix[j].length; k++) {
       
-				// i need to offset x and y
+				// offset x and y
 				var x1 = x + j - offset;
 				x1 = Math.min(Math.max(x1, 0), w-1);  // constrain x1 between 0 and w
 				var y1 = y + k - offset;
@@ -101,41 +108,64 @@ function applyBlur(inputImageData, n) {
 				bTotal += inputImageData.data[4*loc+2]*matrix[j][k];
 			}
 		}
-		
-		// write over the elements
 		outputImageData.data[i+0] = rTotal;  
 		outputImageData.data[i+1] = gTotal;
 		outputImageData.data[i+2] = bTotal;
-		//outputImageData.data[i+3] = inputImageData.data[i+3];
 	}
 	return outputImageData;	
 }
 
+function applySharpen(inputImageData, n, sd, threshold) {
+	
+	var outputImageData = copyImageData(inputImageData);
+	var blurredImageData = applyBlur(inputImageData, n, sd);
+	
+	if (!arguments[3]) {
+		threshold = 30;
+	}
+	
+	// compare input to blurredImageData
+	for (var i = 0; i < inputImageData.data.length; i+=4) {
+		dr = inputImageData.data[i+0]-blurredImageData.data[i+0];  
+		dg = inputImageData.data[i+1]-blurredImageData.data[i+1];
+		db = inputImageData.data[i+2]-blurredImageData.data[i+2];
+		
+		//if (dr > threshold || dg > threshold || db > threshold) {
+			outputImageData.data[i+0] = dr;
+			outputImageData.data[i+1] = dg;
+			outputImageData.data[i+2] = db;
+		//}
+	}
+	
+	return outputImageData;
+}
+
 // this function tests pixels against a threshold
 
-function applyThreshold(inputImageData, outputImageData, threshold) {
-
+function applyThreshold(inputImageData, threshold) {
+	
+	var outputImageData = copyImageData(inputImageData);
 	var w = inputImageData.width;
 	var h = inputImageData.height;
-	if (!arguments[2]) {
+	
+	if (!arguments[1]) {
 		threshold = 50;
 	}
+	
 	for (var i = 0; i < inputImageData.data.length; i+=4) {
 	
-		// if any of r,g or b is greater than threshold, then we set all of them to black, else, white
+		// if any of r,g or b is less than threshold, then we keep them, else, get rid of them
 		let r1 = inputImageData.data[i+0];  
 		let g1 = inputImageData.data[i+1];
 		let b1 = inputImageData.data[i+2];
 		if (r1 < threshold || g1 < threshold || b1 < threshold) {
-			outputImageData.data[i+0] = 0;  
-			outputImageData.data[i+1] = 0;
-			outputImageData.data[i+2] = 0;
-			//outputImageData.data[i+3] = 255;		
+			outputImageData.data[i+0] = inputImageData.data[i+0];  
+			outputImageData.data[i+1] = inputImageData.data[i+1];
+			outputImageData.data[i+2] = inputImageData.data[i+2];		
 		} else {
 			outputImageData.data[i+0] = 255;  
 			outputImageData.data[i+1] = 255;
-			outputImageData.data[i+2] = 255;
-			//outputImageData.data[i+3] = 255;			
+			outputImageData.data[i+2] = 255;			
 		}
 	}
 	return outputImageData;
@@ -301,13 +331,36 @@ function applySobel(inputImageData, outputImageData) {
 	return outputImageData;	
 }
 
-// there has to be a better way for me to do this; and there are some quirks, ie. the edges
-function applyPixelation(inputImageData, outputImageData) {
-	
+function applyTruncate(inputImageData, n) {
+	var outputImageData = copyImageData(inputImageData);
 	var w = inputImageData.width;
 	var h = inputImageData.height;
-	
-	var s = 15;
+
+	n = parseInt(n);
+	if (!arguments[1] || n === 1) {
+		console.log('nothing to see here');
+		return outputImageData;
+	}
+	for (var i = 0; i < inputImageData.data.length; i+=4) {
+		outputImageData.data[i+0] = Math.floor(inputImageData.data[i+0]/n)*n;
+		outputImageData.data[i+1] = Math.floor(inputImageData.data[i+1]/n)*n;
+		outputImageData.data[i+2] = Math.floor(inputImageData.data[i+2]/n)*n;
+	}
+	return outputImageData;
+}
+
+// there has to be a better way for me to do this; and there are some quirks, ie. the edges
+function applyPixelation(inputImageData, s) {
+	var outputImageData = copyImageData(inputImageData);
+	var w = inputImageData.width;
+	var h = inputImageData.height;
+
+	s = parseInt(s);
+	if (!arguments[1] || s === 1) {
+		console.log('nothing to see here');
+		return outputImageData;
+	}
+	console.log(s);
 	
 	// easier to start with x-y in this one
 	for (var j = 0; j < h; j += s) {
@@ -320,21 +373,32 @@ function applyPixelation(inputImageData, outputImageData) {
 			for (var k = 0; k < s; k++) {
 				for (var f = 0; f < s; f++) {
 					var x = i + k;  // x-y is the position of this pixel relative to the image
+					x = Math.min(Math.max(x, 0), w-1);  // constrain it
 					var y = j + f;
+					y = Math.min(Math.max(y, 0), h-1);
 					var pixel = x + y*w;  // pixel is the pixels number
 					var loc = 4*pixel;
 					
-					rTotal = inputImageData.data[loc+0];
-					gTotal = inputImageData.data[loc+1];
-					bTotal = inputImageData.data[loc+2];
+					// i need to contrain the edge cases, because all these pixels outside turn black
+					
+					
+					rTotal += inputImageData.data[loc+0];
+					gTotal += inputImageData.data[loc+1];
+					bTotal += inputImageData.data[loc+2];
 					
 				}
 			}
 			
+			rTotal = rTotal / (s*s);
+			gTotal = gTotal / (s*s);
+			bTotal = bTotal / (s*s);
+			
 			for (var k = 0; k < s; k++) {
 				for (var f = 0; f < s; f++) {
 					var x = i + k;  // x-y is the position of this pixel relative to the image
+					x = Math.min(Math.max(x, 0), w-1);
 					var y = j + f;
+					y = Math.min(Math.max(y, 0), h-1);
 					var pixel = x + y*w;  // pixel is the pixels number
 					var loc = 4*pixel;
 					
@@ -348,6 +412,16 @@ function applyPixelation(inputImageData, outputImageData) {
 		}
 	}
 	return outputImageData;	
+}
+
+function applyCrayonEffect(inputImageData) {
+
+	var outputImageData = copyImageData(inputImageData)
+	
+	for (var i = 0; i < inputImageData.data.length; i+=4) {
+		outputImageData.data[i+3] = 100+Math.random()*100;
+	}
+	return outputImageData;
 }
 
 function copyImageData(inputImageData) {
