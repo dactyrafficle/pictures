@@ -8,7 +8,7 @@ var draw;
 (function() {
 	
 	// initializing	
-	myInputArray = [50, 50, 50, 0, 0, 0, 0, 255, 1, 1, 0];
+	myInputArray = [50, 50, 50, 0, 0, 50, 0, 0, 255, 0, 1, 1, 0];
 	myDropZone = document.getElementById('myDropZone');
 	myThumbnailImage = document.getElementById('myThumbnailImage');
 	myDropZoneText = document.getElementById('myDropZoneText');
@@ -95,7 +95,7 @@ var draw;
 		stopPointillization();
 		ctx.putImageData(workingImageData, 0, 0);
 		restoreMyInputs();
-	});	
+	});
 	
 	// restore canvas event listener
 	document.getElementById('myRestoreButton').addEventListener('click', function() {
@@ -103,7 +103,7 @@ var draw;
 		workingImageData = copyImageData(originalImageData);
 		ctx.putImageData(workingImageData, 0, 0);
 		restoreMyInputs();
-	});
+	});	
 	
 	
 	var myInputs = document.getElementsByClassName('myInputs');
@@ -116,53 +116,71 @@ var draw;
 			ctx.putImageData(x, 0, 0);
 		});
 	}
+	
+	// brightness [0 to 100]
+	var myBrightnessInput = document.getElementById('myBrightnessInput');
+	myBrightnessInput.addEventListener('change', function() {
+		var value = this.value;
+		this.nextElementSibling.textContent = value;
+		var x = applyBrightness(workingImageData, value);
+		ctx.putImageData(x, 0, 0);
+		console.log(value);
+	});
 
 	// blur event listener
-	myInputs[5].addEventListener('change', function() {
+	myInputs[6].addEventListener('change', function() {
 		updateInputArray();
-		let n = 5;
+		let n = 6;
 		let sd = myInputArray[5]/10;
 		var x = applyBlur(workingImageData, n, sd);
 		ctx.putImageData(x, 0, 0);	
 	});
 
 	// sharpen event listener
-	myInputs[6].addEventListener('change', function() {
+	myInputs[7].addEventListener('change', function() {
 		updateInputArray();
 		let n = 5;
-		let sd = myInputArray[6]/10;
+		let sd = myInputArray[7]/10;
 		var x = applySharpen(workingImageData, n, sd);
 		ctx.putImageData(x, 0, 0);	
 	});	
 	
-	// threshold event listener
-	myInputs[7].addEventListener('change', function() {
+	// threshold1 event listener
+	myInputs[8].addEventListener('change', function() {
 		updateInputArray();
-		let thresh = myInputArray[7];
-		var x = applyThreshold(workingImageData, thresh);
+		let thresh = myInputArray[8];
+		var x = applyThreshold(workingImageData, thresh, true);
+		ctx.putImageData(x, 0, 0);	
+	});
+	
+	// threshold2 event listener
+	myInputs[9].addEventListener('change', function() {
+		updateInputArray();
+		let thresh = myInputArray[9];
+		var x = applyThreshold(workingImageData, thresh, false);
 		ctx.putImageData(x, 0, 0);	
 	});
 	
 	// truncate event listener
-	myInputs[8].addEventListener('change', function() {
+	myInputs[10].addEventListener('change', function() {
 		updateInputArray();
-		let n = myInputArray[8];
+		let n = myInputArray[10];
 		var x = applyTruncate(workingImageData, n);
 		ctx.putImageData(x, 0, 0);	
 	});
 	
 	// pixelate event listener
-	myInputs[9].addEventListener('change', function() {
+	myInputs[11].addEventListener('change', function() {
 		updateInputArray();
-		let s = myInputArray[9];
+		let s = myInputArray[11];
 		var x = applyPixelation(workingImageData, s);
 		ctx.putImageData(x, 0, 0);	
 	});
 	
 	// tmask (contrast) event listener
-	myInputs[10].addEventListener('change', function() {
+	myInputs[12].addEventListener('change', function() {
 		updateInputArray();
-		let thresh = myInputArray[10];
+		let thresh = myInputArray[12];
 		var x = applyContrast(workingImageData, thresh);
 		ctx.putImageData(x, 0, 0);	
 	});
@@ -288,12 +306,14 @@ function restoreMyInputs() {
 	inputs[2].value = 50;
 	inputs[3].value = 0;
 	inputs[4].value = 0;
-	inputs[5].value = 0;	
-	inputs[6].value = 0;
-	inputs[7].value = 255;
-	inputs[8].value = 1;
-	inputs[9].value = 1;
-	inputs[10].value = 0;
+	inputs[5].value = 50;
+	inputs[6].value = 0;	
+	inputs[7].value = 0;
+	inputs[8].value = 255;
+	inputs[9].value = 0;
+	inputs[10].value = 1;
+	inputs[11].value = 1;
+	inputs[12].value = 0;
 	
 	for (var i = 0; i < inputs.length; i++) {
 		inputs[i].nextElementSibling.textContent = inputs[i].value;
