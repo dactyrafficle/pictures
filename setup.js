@@ -130,8 +130,8 @@ var draw;
 	// blur event listener
 	myInputs[6].addEventListener('change', function() {
 		updateInputArray();
-		let n = 6;
-		let sd = myInputArray[5]/10;
+		let n = 5;
+		let sd = this.value/10;
 		var x = applyBlur(workingImageData, n, sd);
 		ctx.putImageData(x, 0, 0);	
 	});
@@ -140,7 +140,7 @@ var draw;
 	myInputs[7].addEventListener('change', function() {
 		updateInputArray();
 		let n = 5;
-		let sd = myInputArray[7]/10;
+		let sd = this.value/10;
 		var x = applySharpen(workingImageData, n, sd);
 		ctx.putImageData(x, 0, 0);	
 	});	
@@ -148,7 +148,7 @@ var draw;
 	// threshold1 event listener
 	myInputs[8].addEventListener('change', function() {
 		updateInputArray();
-		let thresh = myInputArray[8];
+		let thresh = this.value;
 		var x = applyThreshold(workingImageData, thresh, true);
 		ctx.putImageData(x, 0, 0);	
 	});
@@ -156,7 +156,7 @@ var draw;
 	// threshold2 event listener
 	myInputs[9].addEventListener('change', function() {
 		updateInputArray();
-		let thresh = myInputArray[9];
+		let thresh = this.value;
 		var x = applyThreshold(workingImageData, thresh, false);
 		ctx.putImageData(x, 0, 0);	
 	});
@@ -164,7 +164,7 @@ var draw;
 	// truncate event listener
 	myInputs[10].addEventListener('change', function() {
 		updateInputArray();
-		let n = myInputArray[10];
+		let n = this.value;
 		var x = applyTruncate(workingImageData, n);
 		ctx.putImageData(x, 0, 0);	
 	});
@@ -216,11 +216,8 @@ var draw;
 	
 	// edge detection event listener
 	document.getElementById('mySobelButton').addEventListener('click', function() {
-		var x = returnCanvasImageData(c, ctx);
-		var z = ctx.createImageData(x);
-		z.data.set(x.data);
-		var y = applySobel(x, z);		
-		ctx.putImageData(y, 0, 0);
+		var x = applySobel(workingImageData);		
+		ctx.putImageData(x, 0, 0);
 	});	
 	
 }());  // closing initialization

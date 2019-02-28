@@ -42,18 +42,27 @@ function applyBlur(inputImageData, n, sd) {
 	var outputImageData = copyImageData(inputImageData);
 	var w = inputImageData.width;
 	var h = inputImageData.height;
-	var k = (n-1)/2;
 	
-	if (!arguments[1]) {
-		n = 5;
+	n = parseInt(n);
+	if (n < 3) {
+		n = 3;
 	}
-	if (arguments.length < 3) { // if sd === 0, then that triggers !arguments[2] to be true, how odd!
+	if (n%2 === 0) {
+		n = n - 1;
+	}
+	if (arguments.length < 1) {
+		n = 5;
 		sd = 0.84089642;
 	}
-	if (sd == 0) {  // cannot use === because i need to keep sd a float
+	if (arguments.length < 2) {
+		sd = 0.84089642;
+	}
+	if (sd == 0) {  // cannot use === because sd is a float
 		return outputImageData;
 	}
+	console.log('blur @ n=' + n + ', sd=' + sd);
 	
+	var k = (n-1)/2;
 	var matrix = []; // the kernel
 	var matrixSum = 0;
 	var offset = Math.floor(n/2);
@@ -78,7 +87,7 @@ function applyBlur(inputImageData, n, sd) {
 			matrix[i][j] /= matrixSum;
 		}
 	}
-	console.log(matrix);
+	//console.log(matrix);
 	
 	for (var i = 0; i < inputImageData.data.length; i+=4) {
 	
@@ -121,25 +130,23 @@ function applySharpen(inputImageData, n, sd, threshold) {
 	var outputImageData = copyImageData(inputImageData);
  	var blurredImageData = applyBlur(inputImageData, n, sd);  // G * Input
 	
-	if (!arguments[3]) {
+	if (arguments.length < 3) {
 		threshold = 30;
+	} else {
+		threshold = parseInt(threshold);
 	}
 	
 	var k = 1;
-	
 	// compare input to blurredImageData
 	for (var i = 0; i < inputImageData.data.length; i+=4) {
 		fine_r = inputImageData.data[i+0]-blurredImageData.data[i+0];  
 		fine_g = inputImageData.data[i+1]-blurredImageData.data[i+1];
 		fine_b = inputImageData.data[i+2]-blurredImageData.data[i+2];
-		
 
 		outputImageData.data[i+0] = inputImageData.data[i+0] + fine_r*k;
 		outputImageData.data[i+1] = inputImageData.data[i+1] + fine_g*k;
 		outputImageData.data[i+2] = inputImageData.data[i+2] + fine_b*k;
-
 	}
-	
 	return outputImageData;
 }
 
@@ -242,7 +249,7 @@ function applyContrast(inputImageData, threshold) {
 
 // sorbel on compterphile:  https://www.youtube.com/watch?v=uihBwtPIBxM
 // sobel on wikipedia:			https://en.wikipedia.org/wiki/Sobel_operator
-function applySobel(inputImageData, outputImageData) {
+function applySobel(inputImageData) {
 	var outputImageData = copyImageData(inputImageData);	
 	var w = inputImageData.width;
 	var h = inputImageData.height;
