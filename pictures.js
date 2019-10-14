@@ -1,4 +1,145 @@
 // change each pixel based on myInputArray
+function getColor(inputImageData, x, y) {
+
+	var outputImageData = copyImageData(inputImageData)
+
+	let w = inputImageData.width;
+	let pixel = x + y*w;
+	let i = pixel*4;
+
+	let r1 = inputImageData.data[i+0];
+	let g1 = inputImageData.data[i+1];
+	let b1 = inputImageData.data[i+2];
+	let a1 = inputImageData.data[i+3];
+	
+	let pos = {
+		x: x,
+		y: y,
+		r: r1,
+		g: g1,
+		b: b1,
+		a: a1
+	}
+	return pos;
+}
+		var t = [
+			[0, -1],
+			[-1, 0],
+			[0, 1],
+			[1, 0]
+		];
+// flood fill: start at x-y, look at up, down, left, right, if within pct%, do again
+function floodFill(inputImageData, x, y, pct) {
+	
+	var outputImageData = copyImageData(inputImageData)
+	
+	let w = inputImageData.width;
+	let h = inputImageData.height;
+	let pixel = x + y*w;
+	let i = pixel*4;
+	
+	// pixel i is where our color comparison will come from
+		let r0 = inputImageData.data[i+0];
+		let g0 = inputImageData.data[i+1];
+		let b0 = inputImageData.data[i+2];
+		let a0 = inputImageData.data[i+3];
+		
+
+		
+		// check adjacent pixels
+		for (let k = 0; k < t.length; k++) {
+			checkAdjacentPixel(inputImageData, outputImageData, x, y, k, t[k][0], t[k][1], w, h, r0, g0, b0, a0, pct);
+		}
+	
+
+		//outputImageData.data[i+0] = r2+(255-2*r2)*invertPct/100;
+		//outputImageData.data[i+1] = g2+(255-2*g2)*invertPct/100;
+		//outputImageData.data[i+2] = b2+(255-2*b2)*invertPct/100;
+	
+	
+	return outputImageData;
+	
+}
+
+function checkAdjacentPixel(inputImageData, outputImageData, x, y, m, dx, dy, w, h, r, g, b, a, pct) {
+	let x1 = x + dx;
+	// make sure pixel is in image
+	if (x1 < 0) {
+		x1 = 0;
+		return null;
+	}
+	if (x1 > w) {
+		x1 = w;
+		return null;
+	}
+	let y1 = y + dy;
+	if (y1 < 0) {
+		y1 = 0;
+		return null;
+	}
+	if (y1 > h) {
+		y1 = h;
+		return null;
+	}
+	
+	let pixel1 = x1 + y1*w;
+	let i1 = pixel1*4;
+		let r1 = inputImageData.data[i1+0];
+		let g1 = inputImageData.data[i1+1];
+		let b1 = inputImageData.data[i1+2];
+		let a1 = inputImageData.data[i1+3];	
+	
+	console.log("(" + r1 + ", " + g1 + ", " + b1 + ")");
+	
+	
+	// test similarity
+	
+	let dr = Math.abs(r - r1);
+	let dg = Math.abs(g - g1);
+	let db = Math.abs(b - b1);
+	let da = Math.abs(a - a1);
+	
+	if (dr < pct && dg < pct && db < pct) {
+		// change color of pixel
+		console.log('ok');
+		outputImageData.data[i1+0] = 255
+		outputImageData.data[i1+1] = 0;
+		outputImageData.data[i1+2] = 0;
+		outputImageData.data[i1+3] = 255;
+		
+		// if success, do recursive
+		//checkAdjacentPixel(inputImageData, outputImageData, x1, y1, dx, dy, w, h, r, g, b, a, pct);
+		
+	for (let k = m; k < t.length; k++) {
+			checkAdjacentPixel(inputImageData, outputImageData, x1, y1, m, t[k][0], t[k][1], w, h, r, g, b, a, pct);
+		}	
+		
+	//checkAdjacentPixel(inputImageData, outputImageData, x1, y1, 0, -1, w, h, r, g, b, a, pct);
+	
+	//checkAdjacentPixel(inputImageData, outputImageData, x1, y1, -1, 0, w, h, r, g, b, a, pct);
+
+	//checkAdjacentPixel(inputImageData, outputImageData, x1, y1, 0, 1, w, h, r, g, b, a, pct);
+
+	//checkAdjacentPixel(inputImageData, outputImageData, x1, y1, 1, 0, w, h, r, g, b, a, pct);
+		
+	}
+	
+	// works so far
+	
+	// var q = floodFill(workingImageData, 108, 243, 10);
+	// ctx.putImageData(x, 0, 0);
+	
+}
+
+
+
+
+
+
+
+/*** ^^^^ working above ^^^^^ *******/
+
+// change each pixel based on myInputArray
 function modify(inputImageData, myInputArray) {
 
 	var outputImageData = copyImageData(inputImageData)

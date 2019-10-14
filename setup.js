@@ -1,11 +1,81 @@
 // setup variables
+var myCanvas = document.getElementById('myCanvas');
 var myDropZone, myThumbnailImage, myDropZoneText;
 var c, ctx;
 var originalImageData, workingImageData;
 var myInputArray;
 var draw;
+
+var aaa = document.createElement('div');
+var bbb = document.createElement('div');
+aaa.style.width = '50px';
+aaa.style.height = '50px';
+document.getElementById('myMain').appendChild(aaa);
+document.getElementById('myMain').appendChild(bbb);
+
+
+
+
+
 	
 (function() {
+	
+	// nonsense testing
+	
+				// findPos(obj) comes from https://stackoverflow.com/questions/6735470/get-pixel-color-from-canvas-on-mouseover
+
+				// from here: until 
+			
+			myCanvas.addEventListener('click', function(e) {
+				var pos = findPos(this);
+				var x = e.pageX - pos.x;
+				var y = e.pageY - pos.y;
+				
+				var coord = "x=" + x + ", y=" + y; 
+				let c = getColor(workingImageData, x, y);
+				
+				console.log(c);
+				aaa.style.backgroundColor = "rgb("+ c.r + ", " + c.g + ", " + c.b + ")";
+				bbb.textContent = "("+ c.r + ", " + c.g + ", " + c.b + ")";
+
+			});
+			
+			// id color
+			myCanvas.addEventListener('mousemove', function(e) {
+				var pos = findPos(this);
+				var x = e.pageX - pos.x;
+				var y = e.pageY - pos.y;
+				
+				var coord = "x=" + x + ", y=" + y;
+				let c = getColor(workingImageData, x, y);
+				aaa.style.backgroundColor = "rgb("+ c.r + ", " + c.g + ", " + c.b + ")";
+				bbb.textContent = "("+ c.r + ", " + c.g + ", " + c.b + ")";
+
+			});
+
+			function findPos(obj) {
+				var curleft = 0, curtop = 0;
+				if (obj.offsetParent) {
+						do {
+								curleft += obj.offsetLeft;
+								curtop += obj.offsetTop;
+						} while (obj = obj.offsetParent);
+						return { x: curleft, y: curtop };
+				}
+				return undefined;
+			}
+			
+				// here
+	
+	// ^^ nonsense testing
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	// initializing	
 	myInputArray = [50, 50, 50, 0, 0, 50, 0, 0, 255, 0, 1, 1, 0];
