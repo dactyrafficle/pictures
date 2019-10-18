@@ -22,12 +22,8 @@ function getColor(inputImageData, x, y) {
 	}
 	return pos;
 }
-		var t = [
-			[0, -1],
-			[-1, 0],
-			[0, 1],
-			[1, 0]
-		];
+
+
 // flood fill: start at x-y, look at up, down, left, right, if within pct%, do again
 function floodFill(inputImageData, x, y, pct) {
 	
@@ -36,29 +32,181 @@ function floodFill(inputImageData, x, y, pct) {
 	let w = inputImageData.width;
 	let h = inputImageData.height;
 	let pixel = x + y*w;
-	let i = pixel*4;
+	//let i = pixel*4;
 	
-	// pixel i is where our color comparison will come from
-		let r0 = inputImageData.data[i+0];
-		let g0 = inputImageData.data[i+1];
-		let b0 = inputImageData.data[i+2];
-		let a0 = inputImageData.data[i+3];
-		
+	let c = getColor(inputImageData, x, y);
 
+	// let us try the flood filling now
+	
+	// we will only visit pixels that meet our criteria
+	let visited = [];
+	
+	// stack contains pixels we will visit, but have not yet visited
+	let stack = [];
+	
+	let obj = {
+		x: x,
+		y: y
+	}
+	
+	visited.push(obj);
+	console.log('visited: ' + visited.length);
+	
+	// loop over stack while it's length is > 0 until there are no more items in stack
+	// bc stack is the array of things we will consider candidates to add to visited
+	
+	
+	
+	// visited has 1 pixel
+	// initiate the stack
+	
+	// look at the first pixel in stack
+	// add it to visited
+	// get its neighbors, add to stack IFF they are not in visited and not already in stack
+	// in this way, stack will grow
+	
+	// in the end, stack = [], and visited contains all the pixels we want
+	
+	
+	// initiate stack
+	stack = getArrayOfNeighbors(inputImageData, x, y, w, h, c.r, c.g, c.b, pct);
+	console.log('initial stack: ' + stack.length);
+	
+	while (stack.length >= 1 && stack.length < 1000) {
 		
-		// check adjacent pixels
-		for (let k = 0; k < t.length; k++) {
-			checkAdjacentPixel(inputImageData, outputImageData, x, y, k, t[k][0], t[k][1], w, h, r0, g0, b0, a0, pct);
+		console.log(stack.length);
+		// look at stack[0] and add to visited
+		visited.push(stack[0]);
+		
+		// for the first element of stack, get its neighbors
+		
+		let tempX = stack[0].x;
+		let tempY = stack[0].y;
+		
+		// the original colors are c.r, c.g, c.b/c
+		// but i can get stack[0]'s color too
+		
+		let c2 = getColor(inputImageData, tempX, tempY);
+		
+		
+		let arr2 = getArrayOfNeighbors(inputImageData, tempX, tempY, w, h, c2.r, c2.g, c2.b, pct);
+
+		for (let k = 0; k < arr2.length; k++) {
+			
+			// the coords of the new pixel we might want to add
+			let x_ = arr2[k].x;
+			let y_ = arr2[k].y;
+
+			// if not in visited
+		
+			let isInVisited = false;
+			for (let i = 0; i < visited.length; i++) {
+				
+				if (x_ === visited[i].x && y_ === visited[i].y) {
+					isInVisited = true;
+				} else {
+					// do nothing
+				}	
+			}
+
+			// and not in stack already		
+			let isInStack = false;
+			for (let i = 0; i < stack.length; i++) {
+				
+				if (x_ === stack[i].x && y_ === stack[i].y) {
+					isInStack = true;
+				} else {
+					// do nothing
+				}	
+			}
+			
+			if (!isInVisited && !isInStack) {
+				stack.push(arr2[k]);
+			}
+			
 		}
+
+
+		// even if we added nothing new to stack, we still delete stack[0]
+		stack.splice(0, 1);
+		
+	}
+	
+	console.log('visited: ' + visited.length);
+	console.log(visited);
+	
+	// now change the color of all the cells in visited
+	
+	for (let i = 0; i < visited.length; i++) {
+		
+		let x_ = visited[i].x;
+		let y_ = visited[i].y;
+		
+		//console.log(x_ + ', ' + y_);
+		let pixel2 = x_ + y_*w;
+		let i_ = pixel2*4;
+		
+		outputImageData.data[i_+0] = 255
+		outputImageData.data[i_+1] = 0;
+		outputImageData.data[i_+2] = 0;
+		outputImageData.data[i_+3] = 255;		
+		
+		
+	}
+	
 	
 
-		//outputImageData.data[i+0] = r2+(255-2*r2)*invertPct/100;
-		//outputImageData.data[i+1] = g2+(255-2*g2)*invertPct/100;
-		//outputImageData.data[i+2] = b2+(255-2*b2)*invertPct/100;
-	
 	
 	return outputImageData;
 	
+}
+
+function getArrayOfNeighbors(inputImageData, x, y, w, h, r, g, b, pct) {
+	
+	let m = [];
+	let arr = [];
+	for (let i = -1; i < 2; i++) {
+		for (let j = -1; j < 2; j++) {
+			let x_ = i;
+			let y_ = j;
+			let obj = {
+				x: x_,
+				y: y_
+			}
+			if (x_ === 0 && y_ == 0) {
+				// do nothing
+			} else {
+				m.push(obj);
+			}
+		}
+	}
+	//console.log(m);
+	
+	for (let i = 0; i < m.length; i++) {
+		let x1 = x + m[i].x;
+		let y1 = y + m[i].y;
+		if (x1 >= 0 && x1 <= w && y1 >= 0 && y1 <= h) {
+			let obj = {
+				x: x1,
+				y: y1
+			}
+			// does the pixel (x1, y1) have the color r, g, b? if yes, add; else, no
+			let c = getColor(inputImageData, x1, y1);
+			
+			let dr = Math.abs(c.r - r);
+			let dg = Math.abs(c.g - g);
+			let db = Math.abs(c.b - b);
+			
+			
+			if (dr < pct && dg < pct && db < pct) {
+				arr.push(c);
+			} else {
+				// do nothing
+			}
+		}
+	}
+	//console.log(arr);
+	return arr;
 }
 
 function checkAdjacentPixel(inputImageData, outputImageData, x, y, m, dx, dy, w, h, r, g, b, a, pct) {
