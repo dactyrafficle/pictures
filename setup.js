@@ -49,7 +49,7 @@ document.getElementById('myMain').appendChild(bbb);
 				var coord = "x=" + x + ", y=" + y;
 				let c = getColor(workingImageData, x, y);
 				aaa.style.backgroundColor = "rgb("+ c.r + ", " + c.g + ", " + c.b + ")";
-				bbb.textContent = "("+ c.r + ", " + c.g + ", " + c.b + ")";
+				bbb.textContent = "("+ c.r + ", " + c.g + ", " + c.b + "," + c.a + ")";
 
 			});
 
