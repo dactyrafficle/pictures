@@ -294,8 +294,19 @@ document.getElementById('myMain').appendChild(bbb);
 	document.getElementById('myFloodFillButton').addEventListener('click', function() {
 		var x = floodFill(workingImageData, 65, 88, 20);		
 		ctx.putImageData(x, 0, 0);
-	});		
+	});
 	
+	// remove alpha event listener
+	document.getElementById('myRemoveAlphaButton').addEventListener('click', function() {
+		var x = removeAlpha(workingImageData, 250);		
+		ctx.putImageData(x, 0, 0);
+	});	
+	
+	// floodfill event listener
+	document.getElementById('myRestorRgbButton').addEventListener('click', function() {
+		var x = restoreRGB(workingImageData);		
+		ctx.putImageData(x, 0, 0);
+	});		
 }());  // closing initialization
 
 
