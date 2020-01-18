@@ -1,3 +1,23 @@
+
+
+// define the html that the function needs to workingImageData
+function addRemoveAlphaButton() {
+	
+	let btn = document.createElement('button');
+	btn.id = 'myRemoveAlphaButton';
+	btn.textContent = 'remove alpha!'
+	
+	// remove alpha event listener
+	btn.addEventListener('click', function() {
+		var x = removeAlpha(workingImageData, 250);		
+		ctx.putImageData(x, 0, 0);
+	});	
+	
+	return btn;
+}
+
+
+// define the function
 function removeAlpha(inputImageData, t) {
 
 	var outputImageData = copyImageData(inputImageData)
@@ -18,27 +38,4 @@ function removeAlpha(inputImageData, t) {
 	return outputImageData;
 }
 
-/*
 
-ctx.putImageData(removeAlpha(workingImageData, 100), 0, 0);
-		
-*/
-
-function restoreRGB(inputImageData) {
-
-	var outputImageData = copyImageData(inputImageData)
-	
-	for (var i = 0; i < inputImageData.data.length; i+=4) {
-	
-		outputImageData.data[i+0] = originalImageData.data[i+0];
-		outputImageData.data[i+1] = originalImageData.data[i+1];
-		outputImageData.data[i+2] = originalImageData.data[i+2];
-		// outputImageData.data[i+3] = 0; // invisible
-	}
-	return outputImageData;
-}
-/*
-
-ctx.putImageData(restoreRGB(workingImageData), 0, 0);
-		
-*/

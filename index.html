@@ -62,20 +62,21 @@
 		<div><span class='sliderNames'>tmask</span><input class='myInputs' type='range' min='0' max='255' value='0' id='myInputTrunc'/><span id='myInputTruncValue'>0</span></div>
 	</div>
 	
-	<div class='mySidebarContents'>
+	<div class='mySidebarContents' id='section4'>
 		<div class='mod-headers'>Sobel:<button id='mySobelButton'>preview</button></div>
 		<div class='mod-headers'>Pointillize<button id='pointillizeStart'>start</button><button id='pointillizeStop'>stop</button></div>
 		<div class='mod-headers'>Triangulate, algo: <a href='https://github.com/snorpey/triangulation' target='_blank'>here</a><button id='triangulate'>start</button></div>
-		<div class='mod-headers'>FloodFill:<button id='myFloodFillButton'>go!</button></div>
-		<div class='mod-headers'>remove alpha<button id='myRemoveAlphaButton'>go!</button></div>		
-		<div class='mod-headers'>restore rgb<button id='myRestorRgbButton'>go!</button></div>
+		<div class='mod-headers'>FloodFill:<button id='myFloodFillButton'>go!</button></div>	
 	</div>
 	
 </div>
 
+<script src='functions/removeAlpha.js?x=' + Math.random()></script>
+<script src='functions/restoreRgb.js?x=' + Math.random()></script>
+
 <script src='setup.js?x=' + Math.random()></script>
 <script src='pictures.js?x=' + Math.random()></script>
-<script src='functions/removeAlpha.js?x=' + Math.random()></script>
+
 <script src='https://cdn.jsdelivr.net/gh/snorpey/triangulate-image/dist/triangulate-image-browser.min.js'></script>
 
 <script></script>
