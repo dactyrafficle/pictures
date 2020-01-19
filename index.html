@@ -10,13 +10,37 @@
 </head>
 
 <div id='myMain' class='myMain'>
+
 	<div id='myDropZone' class='myDropZone'>
 		<span id='myDropZoneText' class='myDropZoneText'>Drag and drop and image here.</span>
 		<canvas id='myCanvas' class='myCanvas'></canvas>
 	</div>
+	
+	<div class='colorInfoParentContainer'>
+	
+		<div id='selectedColorBoxContainer' class='colorInfoContainer'>
+			<div id='selectedColorBox' class='colorBox'></div>
+			<div id='selectedColorBoxInfo'>
+				<span><strong>selected color</strong></span><br>
+				<span>(x,y) = (x, y)</span><br>
+				<span>rgb: (r, g, b, a)</span>
+			</div>
+		</div>
+		
+		<div id='currentColorBoxContainer' class='colorInfoContainer'>
+			<div id='currentColorBox' class='colorBox'></div>
+			<div id='currentColorBoxInfo'>
+				<span><strong>current color</strong></span><br>
+				<span>(x,y) = (x, y)</span><br>
+				<span>rgb: (r, g, b, a)</span>
+			</div>
+		</div>
+	
+	</div>
+		
 </div>
 
-<div id='mySidebar' class='mySidebar'>
+<div id='mySideBar' class='mySideBar'>
 
 	<p>
 		<a style='margin: 0px 10px 0px 10px; text-decoration: none;' href='#'>Here</a>
@@ -26,7 +50,7 @@
 		<a style='margin: 0px 5px 0px 10px; text-decoration: none;' href='notes.html'>Notes</a>
 	</p>
  
- 	<div class='mySidebarContents outer'>
+ 	<div class='mySideBarContents outer'>
 		<div class='middle'>
 			<div class='inner'>
 				<img id='myThumbnailImage' class='myThumbnailImage' src='images/sunflower.jpg' width='100' />
@@ -34,13 +58,13 @@
 		</div>
 	</div>
  
-	<div class='mySidebarContents'>
+	<div class='mySideBarContents'>
 		<button id='myApplyChangesButton'>Apply</button>
 		<button id='myUndoChangesButton'>Undo</button>
 		<button id='myRestoreButton'>Restore</button>
 	</div>
  
-	<div class='mySidebarContents'>
+	<div class='mySideBarContents'>
 		<div><span class='sliderNames'>red</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myInputRed'/><span id='myInputRedValue'>50</span></div>
 		<div><span class='sliderNames'>green</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myInputGreen'/><span id='myInputGreenValue'>50</span></div>
 		<div><span class='sliderNames'>blue</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myInputBlue'/><span id='myInputBlueValue'>50</span></div>
@@ -49,28 +73,28 @@
 		<div><span class='sliderNames'>light</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myBrightnessInput'/><span id='myBrightnessInputValue'>50</span></div>
 		</div>
 	
-	<div class='mySidebarContents'>
+	<div class='mySideBarContents'>
 		<div><span class='sliderNames'>blur</span><input class='myInputs' type='range' min='0' max='50' value='0' id='myBlurInput'/><span id='myBlurInputValue'>0</span></div>
 		<div><span class='sliderNames'>sharp</span><input class='myInputs' type='range' min='0' max='50' value='0' id='myInputSharpen'/><span id='myInputSharpenValue'>0</span></div>
 		<div><span class='sliderNames'>thresh1</span><input class='myInputs' type='range' min='0' max='255' value='255' id='myInputThresh'/><span id='myInputThreshValue'>255</span></div>
 		<div><span class='sliderNames'>thresh2</span><input class='myInputs' type='range' min='0' max='255' value='0' id='myInputThresh'/><span id='myInputThreshValue'>0</span></div>
 	</div>
 
-	<div class='mySidebarContents'>
+	<div class='mySideBarContents'>
 		<div><span class='sliderNames'>trunc</span><input class='myInputs' type='range' min='1' max='50' value='1' id='myInputTrunc'/><span id='myInputTruncValue'>1</span></div>
 		<div><span class='sliderNames'>pixel</span><input class='myInputs' type='range' min='1' max='50' value='1' id='myInputPixel'/><span id='myInputPixelValue'>1</span></div>
 		<div><span class='sliderNames'>tmask</span><input class='myInputs' type='range' min='0' max='255' value='0' id='myInputTrunc'/><span id='myInputTruncValue'>0</span></div>
 	</div>
 	
-	<div class='mySidebarContents' id='section4'>
+	<div class='mySideBarContents'>
 		<div class='mod-headers'>Sobel:<button id='mySobelButton'>preview</button></div>
 		<div class='mod-headers'>Pointillize<button id='pointillizeStart'>start</button><button id='pointillizeStop'>stop</button></div>
 		<div class='mod-headers'>Triangulate, algo: <a href='https://github.com/snorpey/triangulation' target='_blank'>here</a><button id='triangulate'>start</button></div>
-		<div class='mod-headers'>FloodFill:<button id='myFloodFillButton'>go!</button></div>	
 	</div>
 	
 </div>
 
+<script src='functions/floodFill.js?x=' + Math.random()></script>
 <script src='functions/removeAlpha.js?x=' + Math.random()></script>
 <script src='functions/restoreRgb.js?x=' + Math.random()></script>
 

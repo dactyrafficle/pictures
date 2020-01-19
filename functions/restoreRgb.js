@@ -1,7 +1,7 @@
 
 
 // define the html that the function needs to workingImageData
-function addRestoreRgbButton() {
+function addRestoreRgbModule() {
 	
 	let btn = document.createElement('button');
 	btn.id = 'myRestoreRgbButton';

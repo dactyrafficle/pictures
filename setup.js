@@ -1,24 +1,39 @@
 // setup variables
 var myCanvas = document.getElementById('myCanvas');
+var mySideBar = document.getElementById('mySideBar');
 var myDropZone, myThumbnailImage, myDropZoneText;
 var c, ctx;
 var originalImageData, workingImageData;
 var myInputArray;
 var draw;
 
-var aaa = document.createElement('div');
-var bbb = document.createElement('div');
-aaa.style.width = '50px';
-aaa.style.height = '50px';
-document.getElementById('myMain').appendChild(aaa);
-document.getElementById('myMain').appendChild(bbb);
+var currentColorObj = {};
+var selectedColorObj = {};
 
-
-
+var selectedColorBox = document.getElementById('selectedColorBox');
+var selectedColorBoxInfo = document.getElementById('selectedColorBoxInfo');
+var currentColorBox = document.getElementById('currentColorBox');
+var currentColorBoxInfo = document.getElementById('currentColorBoxInfo');
 
 
 	
 (function() {
+
+			// click on thumbnail to set canvas image as thumbnail image
+			document.getElementById('myThumbnailImage').addEventListener('click', function(e){
+				console.log(e);
+				let tempImage = document.createElement('img');
+				tempImage.src = this.src;
+				tempImage.onload = function() {
+				
+					let originalImageWidth = tempImage.width;
+					let originalImageHeight = tempImage.height;
+					// initializes the canvas: clear and resize dropzone + canvas, set thumbnail and capture original image data
+					placeImageOnCanvasAndSetOriginalImgData(myDropZone, c, ctx, myThumbnailImage, tempImage, originalImageWidth, originalImageHeight);
+					restoreMyInputs();
+						
+				}
+			});
 	
 	// nonsense testing
 	
@@ -26,41 +41,37 @@ document.getElementById('myMain').appendChild(bbb);
 
 				// from here: until 
 			
+			// get selected color
 			myCanvas.addEventListener('click', function(e) {
-				var pos = findPos(this);
-				var x = e.pageX - pos.x;
-				var y = e.pageY - pos.y;
+				let p = findPos(this, e);
+				selectedColorObj = getColor(workingImageData, p.x, p.y);
 				
-				var coord = "x=" + x + ", y=" + y; 
-				let c = getColor(workingImageData, x, y);
+				let c = getColor(workingImageData, p.x, p.y);
+			
+				selectedColorBox.style.backgroundColor = "rgb("+ c.r + ", " + c.g + ", " + c.b + ", " + c.a + ")";
+				selectedColorBoxInfo.innerHTML = "<strong>selected color</strong><br>(x,y) = (" + c.x + ", " + c.y + ")" + '<br>' + " rgb: ("+ c.r + ", " + c.g + ", " + c.b + ", " + c.a + ")";
 				
-				console.log(c);
-				aaa.style.backgroundColor = "rgb("+ c.r + ", " + c.g + ", " + c.b + ")";
-				bbb.textContent = "("+ c.r + ", " + c.g + ", " + c.b + ")";
-
 			});
 			
-			// id color
+			// get current color
 			myCanvas.addEventListener('mousemove', function(e) {
-				var pos = findPos(this);
-				var x = e.pageX - pos.x;
-				var y = e.pageY - pos.y;
+				let p = findPos(this, e);
+				currentColorObj = getColor(workingImageData, p.x, p.y);
+				let c = getColor(workingImageData, p.x, p.y);
 				
-				var coord = "x=" + x + ", y=" + y;
-				let c = getColor(workingImageData, x, y);
-				aaa.style.backgroundColor = "rgb("+ c.r + ", " + c.g + ", " + c.b + ")";
-				bbb.textContent = "("+ c.r + ", " + c.g + ", " + c.b + "," + c.a + ")";
+				currentColorBox.style.backgroundColor = "rgb("+ c.r + ", " + c.g + ", " + c.b + ", " + c.a + ")";
+				currentColorBoxInfo.innerHTML = "<strong>current color</strong><br>(x,y) = (" + c.x + ", " + c.y + ")" + '<br>' + " rgb: ("+ c.r + ", " + c.g + ", " + c.b + ", " + c.a + ")";
 
 			});
 
-			function findPos(obj) {
+			function findPos(obj, e) {
 				var curleft = 0, curtop = 0;
 				if (obj.offsetParent) {
 						do {
 								curleft += obj.offsetLeft;
 								curtop += obj.offsetTop;
 						} while (obj = obj.offsetParent);
-						return { x: curleft, y: curtop };
+						return { x: e.pageX - curleft, y: e.pageY - curtop };
 				}
 				return undefined;
 			}
@@ -290,14 +301,14 @@ document.getElementById('myMain').appendChild(bbb);
 		ctx.putImageData(x, 0, 0);
 	});	
 	
-	// floodfill event listener
-	document.getElementById('myFloodFillButton').addEventListener('click', function() {
-		var x = floodFill(workingImageData, 65, 88, 20);		
-		ctx.putImageData(x, 0, 0);
-	});
+	let section5 = document.createElement('div');
+	section5.id = 'section5';
+	section5.classList.add('mySideBarContents');
+	mySideBar.appendChild(section5);
 
-	document.getElementById('section4').appendChild(addRestoreRgbButton());
-	document.getElementById('section4').appendChild(addRemoveAlphaButton());
+	section5.appendChild(addFloodFillModule());
+	section5.appendChild(addRestoreRgbModule());
+	section5.appendChild(addRemoveAlphaModule());
 	
 }());  // closing initialization
 

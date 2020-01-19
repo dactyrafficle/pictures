@@ -1,4 +1,4 @@
-.mySidebar {
+.mySideBar {
   position: fixed;
   top: 0;
   height: 100%;
@@ -7,12 +7,13 @@
   //width: 300px;
   border-right: 2px solid #999;
 }
-.mySidebarContents {
+.mySideBarContents {
   margin: 10px;
   padding: 5px;
   border: 2px solid #ddd;
 	width: 230px;
 }
+
 .outer {
   display: table;
 	height: 110px;
@@ -53,11 +54,33 @@ button {
 .myDropZone {
 	width: 400px;
 	height: 300px;
-	border: 2px solid #ddd;
 	line-height: 300px;
 	text-align: center;
 	font-family: calibri, 'sans-serif';
 	font-size: 20px;
+	border: 2px solid #ddd;
 	margin: 6px;
 	padding: 6px;
+}
+.colorInfoParentContainer {
+	font-family: calibri, 'sans-serif';
+	font-size: 14px;
+	border: 2px solid #ddd;
+	margin: 6px;
+	padding: 6px;	
+}
+.colorInfoContainer {
+	padding: 3px;
+	display: inline-block;
+}
+.colorInfoContainer:nth-child(2) {
+	position: absolute;
+	left: 50%;
+	padding-left: 6px;
+	border-left: 2px solid #ddd;	
+}
+.colorBox {
+	width: 50px;
+	height: 50px;
+	border: 1px solid #ddd;
 }

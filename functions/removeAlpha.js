@@ -1,7 +1,7 @@
 
 
 // define the html that the function needs to workingImageData
-function addRemoveAlphaButton() {
+function addRemoveAlphaModule() {
 	
 	let btn = document.createElement('button');
 	btn.id = 'myRemoveAlphaButton';
