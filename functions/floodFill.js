@@ -49,9 +49,9 @@ function floodFill2(x, y, targetColor, newColor, id) {
 	// to get the image data of the point x, y -> need to convert x and y to the img data array
 	let c = ctx.getImageData(x, y, 1, 1).data;
 	
-	console.log(c);
-	console.log(targetColor);
-	console.log(newColor);
+	//console.log(c);
+	//console.log(targetColor);
+	//console.log(newColor);
 	
 	
 	// if the pixel doesnt match the target color, end function
