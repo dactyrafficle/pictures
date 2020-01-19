@@ -16,6 +16,7 @@ var currentColorBox = document.getElementById('currentColorBox');
 var currentColorBoxInfo = document.getElementById('currentColorBoxInfo');
 
 
+var mouseIsPressed = false;
 	
 (function() {
 
@@ -34,6 +35,30 @@ var currentColorBoxInfo = document.getElementById('currentColorBoxInfo');
 						
 				}
 			});
+			
+			
+			myCanvas.addEventListener('mousedown', function(e) {
+				mouseIsPressed = true;
+				let p = findPos(this, e);
+				if (mouseIsPressed) {
+					line(p.x, p.y, e.movementX, e.movementY)
+				}
+			});
+			myCanvas.addEventListener('mousemove', function(e) {
+				let p = findPos(this, e);
+				if (mouseIsPressed) {
+					line(p.x, p.y, e.movementX, e.movementY)
+				}
+			});				
+			
+			myCanvas.addEventListener('mouseup', function() {
+				mouseIsPressed = false;
+			});
+			myCanvas.addEventListener('mouseleave', function() {
+				mouseIsPressed = false;
+			});
+				
+			
 	
 	// nonsense testing
 	
@@ -432,11 +457,11 @@ function pointillize(canvas, context) {
 		var r = imgData.data[loc];
 		var g = imgData.data[loc+1];
 		var b = imgData.data[loc+2];
-		var a = (imgData.data[loc+3]/255)*0.5;  // this way, if alpha = 0, it will stay zero
+		//var a = (imgData.data[loc+3]/255)*0.5;  // this way, if alpha = 0, it will stay zero
 		var radius = Math.floor(2+Math.random()*3);
 		
-		fill(ctx, r, g, b, a);
-		ellipse(ctx, x, y, radius);
+		fill(r, g, b, 120);
+		ellipse(x, y, radius);
 
 	}
 	}, 50);  // closing setInterval()
@@ -454,12 +479,4 @@ function returnCanvasImageData(canvas, context) {
 	return x;
 }
 
-function fill(ctx, r, g, b, a) {
-	ctx.fillStyle = 'rgb(' + r + ',' + g + ', ' + b + ',' + a + ')';
-}
 
-function ellipse(ctx, x, y, rx) {
-	ctx.beginPath();
-	ctx.arc(x, y, rx, 0, 2*Math.PI);
-	ctx.fill()	
-}
