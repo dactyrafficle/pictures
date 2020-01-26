@@ -37,35 +37,6 @@ var mouseIsPressed = false;
 			});
 			
 			
-			myCanvas.addEventListener('mousedown', function(e) {
-				mouseIsPressed = true;
-				let p = findPos(this, e);
-				if (mouseIsPressed) {
-					line(p.x, p.y, e.movementX, e.movementY)
-				}
-			});
-			myCanvas.addEventListener('mousemove', function(e) {
-				let p = findPos(this, e);
-				if (mouseIsPressed) {
-					line(p.x, p.y, e.movementX, e.movementY)
-				}
-			});				
-			
-			myCanvas.addEventListener('mouseup', function() {
-				mouseIsPressed = false;
-			});
-			myCanvas.addEventListener('mouseleave', function() {
-				mouseIsPressed = false;
-			});
-				
-			
-	
-	// nonsense testing
-	
-				// findPos(obj) comes from https://stackoverflow.com/questions/6735470/get-pixel-color-from-canvas-on-mouseover
-
-				// from here: until 
-			
 			// get selected color
 			myCanvas.addEventListener('click', function(e) {
 				let p = findPos(this, e);
@@ -89,17 +60,7 @@ var mouseIsPressed = false;
 
 			});
 
-			function findPos(obj, e) {
-				var curleft = 0, curtop = 0;
-				if (obj.offsetParent) {
-						do {
-								curleft += obj.offsetLeft;
-								curtop += obj.offsetTop;
-						} while (obj = obj.offsetParent);
-						return { x: e.pageX - curleft, y: e.pageY - curtop };
-				}
-				return undefined;
-			}
+
 			
 				// here
 	
@@ -331,6 +292,7 @@ var mouseIsPressed = false;
 	section5.classList.add('mySideBarContents');
 	mySideBar.appendChild(section5);
 
+	section5.appendChild(addDrawOnCanvasModule());
 	section5.appendChild(addFloodFillModule());
 	section5.appendChild(addRestoreRgbModule());
 	section5.appendChild(addRemoveAlphaModule());
