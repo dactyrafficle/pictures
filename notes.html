@@ -94,12 +94,29 @@ x.data.set(imgData.data);</pre>
 
 <pre class='blue'>var x = new Uint8ClampedArray(originalImageData.data);</pre>
 
-<h4> The = operator will not copy the whole image data object </h4>
+<h4> The <span class='inline-code'>=</span> operator will not copy the whole image data object </h4>
 <pre class='blue'> var x = originalImageData; <span class='green'>// console.log(x);</span></pre>
 
 <h4> Manipulating the pixels</h4>
 
-<p> The <span class='inline-code'>imgData.data</span> array stores the image data in the following way: <span class='inline-code'>imgData.data = [r0, g0, b0, a0, r1, g1, b1, a1, r2, g2, b2, a2, ......, an]</span></p>
+<p> It all starts with the <span class='inline-code'>imgData</span> object.</p>
+
+<p> One of its properties is <span class='inline-code'>imgData.data</span>, which looks like an Array but is actually an <span class='inline-code'>ArrayBuffer</span> object.</p>
+
+<p> The <span class='inline-code'>imgData.data</span> ArrayBuffer stores the image's data in the following way: <span class='inline-code'>imgData.data = [r0, g0, b0, a0, r1, g1, b1, a1, r2, g2, b2, a2, ......, an]</span>. In this case, each element holds an 8-bit integer. So it's just a sequence of 8 0s and 1s.</p>
+
+<p> It can get confusing trying to figure out which element belongs to which pixel, so we might want to use the <span class='inline-code'>Uint32Array</span>.</p>
+
+<h4> Uint32Array </h4>
+
+<p> We can convert the <span class='inline-code'>imgData.data</span> ArrayBuffer into a Uint32Array like this: <span class='inline-code'>const p32 = new Uint32Array(imgData.data.buffer); </span></p>
+
+<p> The line <span class='inline-code'>imgData.data.buffer</span> returns the source ArrayBuffer on which imgData.data was created. And using this, we can view the data in perhaps a more amenable way. A Uint32Array is a typed array, where each element is a 32-bit integer. The 'U' stands for unsigned, which means that there is no +ve or -ve. If if was signed, that would mean the first bit would denote +ve (0) or -ve(1). </p>
+
+<h4> Endianess </h4>
+
+<p> The Uint32Array stores its elements as 32bit integers. But the bytes are read backwards. So in the above example, the elements from <span class='inline-code'>imgData.data = [r0, g0, b0, a0, ...] </span> would become <span class='inline-code'>p32 = [pixel0, ...]</span> where pixel0 stores r0, g0, b0, a0 - but it does it backwards, so the number is actually ABGR, or a0+b0+g0+r0, where each a0, b0 etc, are 8bits. So pixel0 is a 32-bit sequence integer</p>
+
 
 <img src='imgData.png'/>
 

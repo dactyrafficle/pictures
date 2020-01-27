@@ -5,55 +5,30 @@ function fill(r, g, b, a) {
 		r = arguments[0];
 		g = arguments[0];
 		b = arguments[0];
-	}
-	
-	if (r < 0) {
-		r = 0;
-	}
-	if (g < 0) {
-		g = 0;
-	}
-	if (b < 0) {
-		b = 0;
-	}
-	if (a < 0 ) {
-		a = 0;
-	}
-	if (r > 255) {
-		r = 255;
-	}
-	if (g > 255) {
-		g = 255;
-	}
-	if (b > 255) {
-		b = 255
-	}
-	if (a > 255) {
 		a = 255;
 	}
 	
-	let r1 = r.toString(16);
-	let g1 = g.toString(16);
-	let b1 = b.toString(16);
-	let a1 = a.toString(16);
-	
-	if (r1.length < 2) {
-		r1 = '0' + r1;
+	let hexString = '#';
+	for (let i = 0; i < arguments.length; i++) {
+		let c = Math.floor(arguments[i]);
+		if (c < 0) {c = 0;}
+    if (c > 255) {c = 255;}
+		c = c.toString(16);
+		if (c.length < 2) {c = '0' + c;}
+		hexString += c;
 	}
-	if (g1.length < 2) {
-		g1 = '0' + g1;
-	}	
-	if (b1.length < 2) {
-		b1 = '0' + b1;
-	}	
-	if (a1.length < 2) {
-		a1 = '0' + a1;
-	}	
-	
-	let hexString = '#' + r1 + g1 + b1 + a1;
-	//console.log(hexString);
 	
 	ctx.fillStyle = hexString; 
+};
+
+
+// to add a lot of rectangles
+function addRect(w, h, n) {
+	let x = ctx.canvas.width;
+	let y = ctx.canvas.height;
+  for (let i = 0; i < n; i++) {
+		rect(Math.random()*x, Math.random()*y, Math.random()*w, Math.random()*h);	
+	}
 };
 
 // woefully inadequate i know
