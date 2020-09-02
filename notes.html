@@ -20,13 +20,15 @@
 <ol>
   <li> Set the <span class='inline-code'>src</span> of an <span class='inline-code'>img</span> tag
   <li> Listen for the <span class='inline-code'>img.onload</span> event, then copy the image onto the canvas
-  <li> Extract the imgage data from the canvas
+  <li> Extract the image data from the canvas
   <li> Manipulate the imgData object, and
   <li> Place the new imgData object onto the canvas</li>
 </ol>
 
 <p> The <span class='inline-code'>src</span> can come from a lot of places but if it comes from anywhere outside the server, or from a data url, we cannot use <span class='inline-code'>getImageData()</span> to extract <span class='inline-code'>imgData</span> object once it is on the canvas because the default is for browsers to not allow CORS </p>
 
+<img src='image-manipulation.png'/>
+  
 <h4> Setup</h4>
 
 <pre class='blue'>var c, ctx;
