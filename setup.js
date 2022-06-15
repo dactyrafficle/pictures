@@ -16,9 +16,31 @@ var currentColorBox = document.getElementById('currentColorBox');
 var currentColorBoxInfo = document.getElementById('currentColorBoxInfo');
 
 
+let selectMode = false;
+let selection = {
+  'x0':null,
+  'y0':null,
+  'x1':null,
+  'y1':null
+}
+
 var mouseIsPressed = false;
 	
 (function() {
+  
+      mySelectButton.addEventListener('click', function() {
+        if (selectMode) {
+          selectMode = false;
+          mySelectButton.style.backgroundColor = '#eee'; //'#c2d1f0';
+          mySelectButton.style.border = '2px solid transparent';
+        } else {
+          selectMode = true;
+          mySelectButton.style.backgroundColor = '#c2d1f0';
+          mySelectButton.style.border = '2px solid #3366cc';
+        }
+        // console.log(selectMode);
+      });
+      
 
 			// click on thumbnail to set canvas image as thumbnail image
 			document.getElementById('myThumbnailImage').addEventListener('click', function(e){
@@ -43,12 +65,56 @@ var mouseIsPressed = false;
 				selectedColorObj = getColor(workingImageData, p.x, p.y);
 				
 				let c = getColor(workingImageData, p.x, p.y);
-			
+			  // console.log(selectMode);
+        
 				selectedColorBox.style.backgroundColor = "rgb("+ c.r + ", " + c.g + ", " + c.b + ", " + c.a + ")";
 				selectedColorBoxInfo.innerHTML = "<strong>selected color</strong><br>(x,y) = (" + c.x + ", " + c.y + ")" + '<br>' + " rgb: ("+ c.r + ", " + c.g + ", " + c.b + ", " + c.a + ")";
 				
+        
+        // console.log(c);
+        
+        // if select mode is true, draw a box
 			});
+      
+			myCanvas.addEventListener('mousedown', function(e) {
+				let p = findPos(this, e);
+				selectedColorObj = getColor(workingImageData, p.x, p.y);
+				
+				let c = getColor(workingImageData, p.x, p.y);
+        // console.log(c);
+        if (selectMode) {
+          selection.x0 = c.x;
+          selection.y0 = c.y;
+        }
+      });        
 			
+			myCanvas.addEventListener('mouseup', function(e) {
+				let p = findPos(this, e);
+				selectedColorObj = getColor(workingImageData, p.x, p.y);
+				
+				let c = getColor(workingImageData, p.x, p.y);
+			  // console.log(c);
+        if (selectMode) {
+          selection.x1 = c.x;
+          selection.y1 = c.y;
+          console.log(selection);
+          
+          
+          let w = selection.x1 - selection.x0;
+          let h = selection.y1 - selection.y0;
+          
+          // draw box where selection is
+          ctx.beginPath();
+          ctx.rect(selection.x0, selection.y0, w, h);
+          ctx.stroke();
+        }
+      
+      
+      
+      });  
+
+      
+      
 			// get current color
 			myCanvas.addEventListener('mousemove', function(e) {
 				let p = findPos(this, e);
@@ -184,6 +250,7 @@ var mouseIsPressed = false;
 		});
 	}
 	
+  
 	// brightness [0 to 100]
 	var myBrightnessInput = document.getElementById('myBrightnessInput');
 	myBrightnessInput.addEventListener('change', function() {
@@ -254,7 +321,11 @@ var mouseIsPressed = false;
 	
 	// adding event listeners for the pointillization buttons
 	document.getElementById('pointillizeStart').addEventListener('click', function() {
-		pointillize(c, ctx);
+    let r_min = parseInt(document.getElementById('pointilize_r_min').value);
+    let r_max = parseInt(document.getElementById('pointilize_r_max').value);
+    let a_min = parseInt(document.getElementById('pointilize_a_min').value);
+    let a_max = parseInt(document.getElementById('pointilize_a_max').value);
+		pointillize(c, ctx, r_min, r_max, a_min, a_max);
 	});
 	document.getElementById('pointillizeStop').addEventListener('click', function() {
 		stopPointillization();
@@ -295,7 +366,8 @@ var mouseIsPressed = false;
 	section5.appendChild(addDrawOnCanvasModule());
 	section5.appendChild(addFloodFillModule());
 	section5.appendChild(addRestoreRgbModule());
-	section5.appendChild(addRemoveAlphaModule());
+  
+	// section5.appendChild(return_remove_alpha_control_module());
 	
 }());  // closing initialization
 
@@ -396,7 +468,18 @@ function restoreMyInputs() {
 }
 
 // pointillization functions
-function pointillize(canvas, context) {
+function pointillize(canvas, context, rad_min, rad_max, a_min, a_max) {
+  
+   let frameCount = 0;
+   let count = 0;
+  let maxFrameCount = 1600;
+  
+  let dots_per_frame = 100;
+  
+  let rad_pow = 1;
+  let rad_range = rad_max - rad_min;
+  let a_range = a_max - a_min;
+  
   if (draw) {
 		clearInterval(draw);
 	}
@@ -405,28 +488,102 @@ function pointillize(canvas, context) {
 	
 	ctx.beginPath();
 	ctx.rect(0, 0, c.width, c.height);
-	ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+	ctx.fillStyle = 'rgba(255, 255, 255, 255)'; // by setting alpha=1, or 0, it makes the background transparent
 	ctx.fill();
 	
-	draw = setInterval(function() {  
-	for (var i = 0; i < 100; i++) {
+	draw = setInterval(function() {
+    
+    if (frameCount > maxFrameCount) {
+      dots_per_frame = 150;
+    }
+    
+	for (var i = 0; i < dots_per_frame; i++) {
+
 		// pick random integers x and y
-		var y = Math.floor(Math.random()*c.height);
-		var x = Math.floor(Math.random()*c.width);
+		let y = Math.floor(Math.random()*c.height);
+		let x = Math.floor(Math.random()*c.width);
+
 		// get its position in the array
 		var loc = (y*c.width + x)*4;
+    
 		// alpha in rgba goes from 0 to 1
 		var r = imgData.data[loc];
 		var g = imgData.data[loc+1];
 		var b = imgData.data[loc+2];
-		//var a = (imgData.data[loc+3]/255)*0.5;  // this way, if alpha = 0, it will stay zero
-		var radius = Math.floor(2+Math.random()*3);
-		
-		fill(r, g, b, 120);
-		ellipse(x, y, radius);
 
+		
+    // by frame 2400, there should only be rad_min left
+    let rad;
+    
+    if (frameCount < maxFrameCount) {
+      rad = Math.floor(rad_min + Math.random() * (rad_max*(1-frameCount/maxFrameCount) - rad_min));
+      
+    } else {
+      // frameCount > maxFrameCount
+      rad = Math.floor(rad_min + Math.random() * 2);
+      
+    }
+    
+    
+    //let rad = Math.floor(rad_min + Math.random() * (rad_max - rad_min));
+    let drad = rad - rad_min;
+    let drad_pct = drad / rad_range;
+    let a = a_max - drad_pct*a_range;
+
+    // calculate the greyscale of each color
+    let f0 = (r + g + b)/3;
+    let f1 = (r - f0)**2;
+    let f2 = (g - f0)**2;
+    let f3 = (b - f0)**2;
+    let f = (f1 + f2 + f3)/3;
+  
+    /*
+    // shadow
+    if (f < 50 && r < 250 && Math.random() > 0.5) {
+		 //fill(50, 100, 205, 1); // a in (0,255), where 0=transparent; 255=opaque
+		 fill(255, 0, 0, 1); // a in (0,255), where 0=transparent; 255=opaque
+		 ellipse(x, y, radius*(1+Math.random()*2));
+    }
+    */
+
+    // regular dots
+		fill(r, g, b, a); // a in (0,255), where 0=transparent; 255=opaque
+		ellipse(x, y, rad);
+    
 	}
-	}, 50);  // closing setInterval()
+  
+  
+  // capture frames
+  if (false && frameCount%2===0 && count < 60) {
+    
+    // console.log(frameCount);
+    
+    let MIME_TYPE = "image/png";
+    let a = document.createElement('a');
+    let imgURL = canvas.toDataURL(MIME_TYPE); // canvas is already defined as funtion parameter
+    
+    //a.href = 'data:,' + encodeURI(imgURL); // this really is key
+    
+    
+    if (count < 10) {
+      a.download = 'x-0' + count + '.png';
+    } else {
+      a.download = 'x-' + count + '.png';
+    }
+    count++;
+    
+    a.href = imgURL;
+    a.dataset.downloadurl = [MIME_TYPE,a.download, a.href].join(':');
+    
+    document.body.appendChild(a);
+    a.target = '_blank';
+    a.click();
+    a.remove(); 
+  
+  }
+  frameCount++;
+  
+	}, 16);  // closing setInterval()
 }
 function stopPointillization() {
   clearInterval(draw);

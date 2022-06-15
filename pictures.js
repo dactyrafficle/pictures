@@ -59,6 +59,11 @@ function modify(inputImageData, myInputArray) {
 		outputImageData.data[i+2] = b2+(255-2*b2)*invertPct/100;
 	}
 	return outputImageData;
+  
+  
+// hslToRgb
+// rgbToHsl
+  
 }
 
 // it always assumes pct is 50. that why when i rest on 70-70-30 for example, it warps the colors
@@ -393,6 +398,7 @@ function applyPixelation(inputImageData, s) {
 					outputImageData.data[loc+0] = rTotal;
 					outputImageData.data[loc+1] = gTotal;
 					outputImageData.data[loc+2] = bTotal;
+          outputImageData.data[loc+3] = 255;
 				}
 			}				
 		}

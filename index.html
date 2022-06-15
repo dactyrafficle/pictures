@@ -7,6 +7,10 @@
 	<link rel="stylesheet" type="text/css" href="pictures.css?x=" + Math.random()>
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 	<style></style>
+
+  <script src='./functions/remove_alpha.js?x=' + Math.random()></script>
+  <script src='./functions/download_imgdata_as_png.js?x=' + Math.random()></script>
+  
 </head>
 
 <div id='myMain' class='myMain'>
@@ -42,6 +46,16 @@
 
 <div id='mySideBar' class='mySideBar'>
 
+  <div id='remove_alpha_control_module'></div>
+  <script>
+    remove_alpha_control_module.appendChild(return_remove_alpha_control_module());
+  </script>
+
+  <div id='download_imgdata_as_png_control_module'></div>
+  <script>
+    download_imgdata_as_png_control_module.appendChild(return_download_imgdata_as_png_control_module());
+  </script>
+  
 	<p>
 		<a style='margin: 0px 10px 0px 10px; text-decoration: none;' href='#'>Here</a>
 		<span>|</span>
@@ -62,6 +76,7 @@
 		<button id='myApplyChangesButton'>Apply</button>
 		<button id='myUndoChangesButton'>Undo</button>
 		<button id='myRestoreButton'>Restore</button>
+    <button id='mySelectButton'>Select</button>
 	</div>
  
 	<div class='mySideBarContents'>
@@ -86,9 +101,38 @@
 		<div><span class='sliderNames'>tmask</span><input class='myInputs' type='range' min='0' max='255' value='0' id='myInputTrunc'/><span id='myInputTruncValue'>0</span></div>
 	</div>
 	
+  
+	<div class='mySideBarContents'>
+   <h4> POINTILIZE </h4>
+    <table class='mytables'>
+     <tr><td></td><td>radius</td><td>alpha</td></tr>
+     <tr>
+      <td> min </td>
+      <td><input id='pointilize_r_min' type="number" step="1" min="1" max="50" value="1" /></td>
+      <td><input id='pointilize_a_max' type="number" step="1" min="0" max="255" value="120" /></td>    
+     </tr>
+     <tr>
+      <td> max </td>
+      <td><input id='pointilize_r_max' type="number" step="1" min="1" max="50" value="7" /></td>
+      <td><input id='pointilize_a_min' type="number" step="1" min="0" max="255" value="1" /></td>    
+     </tr>
+    </table>
+    <p> n_dots per frame : 100 </p>
+    <p> fps : 1000/50 </p>
+    <p> shadow effect </p>
+    <button id="pointillizeStart">start</button>
+    <button id="pointillizeStop">stop</button>
+    <p> As radius goes down, color gets more opaque </p>
+    <p> Alpha @0 = transparent </p>
+    <p> Alpha @255 = opaque </p>
+	</div>
+
+  
 	<div class='mySideBarContents'>
 		<div class='mod-headers'>Sobel:<button id='mySobelButton'>preview</button></div>
-		<div class='mod-headers'>Pointillize<button id='pointillizeStart'>start</button><button id='pointillizeStop'>stop</button></div>
+    
+    
+
 		<div class='mod-headers'>Triangulate, algo: <a href='https://github.com/snorpey/triangulation' target='_blank'>here</a><button id='triangulate'>start</button></div>
 	</div>
 	
@@ -100,7 +144,7 @@
 <script src='functions/drawOnCanvas.js?x=' + Math.random()></script>
 <script src='functions/floodFill.js?x=' + Math.random()></script>
 
-<script src='functions/removeAlpha.js?x=' + Math.random()></script>
+
 <script src='functions/restoreRgb.js?x=' + Math.random()></script>
 
 <script src='setup.js?x=' + Math.random()></script>
