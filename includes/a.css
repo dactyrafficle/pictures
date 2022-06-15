@@ -1,0 +1,147 @@
+
+html, body {
+ font-family: calibri;
+ margin: 0;
+ padding: 0;
+ border: none;
+}
+
+a {
+ text-decoration: none;
+}
+
+pre {
+  padding: 0 1vh;
+  font-size: 1.1em;
+  line-height: 1.3em;
+  white-space: pre-wrap;       /* Since CSS 2.1 */
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+.section {
+ display: block;
+ vertical-align: top;
+}
+.box {
+ display: inline-block;
+ vertical-align: top;
+}
+.hcenter {
+ text-align: center;
+}
+.border {
+ border: 1px solid #ddd;
+}
+.border2 {
+ border: 2px solid #ddd;
+}
+.margin {
+ margin: 0.5vh;
+}
+.margin2 {
+ margin: 1vh;
+}
+.padding {
+ padding: 0.5vh;
+}
+.padding2 {
+ padding: 1vh;
+}
+
+.mytable, .mytables {
+  border-collapse: collapse;
+}
+.mytable td, .mytables td {
+  border: 1px solid #ddd;
+  padding: 0.5em;
+}
+.myinput, .myinputs {
+  padding: 0.5em;
+}
+
+.mybutton, .mybuttons {
+  background-color: #eee;
+  border: 2px solid #58d7;
+  cursor: default;
+}
+.mybutton:hover, .mybuttons:hover {
+  background-color: #ddd;
+  border: 2px solid #58dc;
+}
+
+
+  
+
+
+
+.code {
+  color: #049;
+}
+.comment {
+  color: #2b2f;
+}
+.inline-code {
+  display: inline-block;
+  font-weight: normal;
+  font-family: monospace;
+  padding: 0.3em;
+  background-color: #eee;
+  margin-left: 0;
+  margin-right: 0;
+
+  font-size: 1em;
+}
+
+
+.abc {
+  font-family: monospace;
+  padding: 1vh;
+}
+
+.myoutputs {
+  text-align: center;
+}
+
+.blue {
+ color: #58d;
+ font-weight: 450;
+ font-size: 1.4em;
+}
+.pink {
+ color: #c5c;
+ font-weight: 450;
+ font-size: 1.4em;
+}
+.orange {
+ color: #fa2;
+ font-weight: 450;
+ font-size: 1.4em;
+}
+.yellow {
+ color: #fc0;
+ font-weight: 450;
+ font-size: 1.4em;
+}
+.green {
+ color: #5c5c;
+ font-weight: 450;
+ font-size: 1.4em;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.py-orange {
+ color: #fa2;
+ font-weight: bold;
+}
