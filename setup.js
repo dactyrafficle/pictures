@@ -177,7 +177,7 @@
 					var originalImageWidth = tempImage.width;
 					var originalImageHeight = tempImage.height;
 					// initializes the canvas: clear and resize dropzone + canvas, set thumbnail and capture original image data
-					placeImageOnCanvasAndSetOriginalImgData(myDropZone, c, ctx, myThumbnailImage, tempImage, originalImageWidth, originalImageHeight);
+					placeImageOnCanvasAndSetOriginalImgData(my_drop_zone, c, ctx, myThumbnailImage, tempImage, originalImageWidth, originalImageHeight);
 					restoreMyInputs();
 						
 				}
