@@ -13,7 +13,7 @@ function findPos(obj, e) {
 				return { x: e.pageX - curleft, y: e.pageY - curtop };
 		}
 		return undefined;
-	}
+}
 		
 // change each pixel based on myInputArray
 function getColor(inputImageData, x, y) {
