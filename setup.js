@@ -328,17 +328,7 @@
 	document.getElementById('mySobelButton').addEventListener('click', function() {
 		var x = applySobel(workingImageData);		
 		ctx.putImageData(x, 0, 0);
-	});	
-	
-	let section5 = document.createElement('div');
-	section5.id = 'section5';
-	section5.classList.add('mySideBarContents');
-	my_sidebar_container.appendChild(section5);
-
-	section5.appendChild(addRestoreRgbModule());
-  
-	// section5.appendChild(return_remove_alpha_control_module());
-  
+	});
   
   }); // closing window.onload
 	
@@ -350,7 +340,7 @@
 function placeImageOnCanvasAndSetOriginalImgData(container, canvas, context, myThumbnailImage, tempImage, originalImageWidth, originalImageHeight) {
 	
 	// clear the contents of dropZone
-	myDropZoneText.style.display = 'none';
+	my_drop_zone_text_box.style.display = 'none';
 	
 	
 	

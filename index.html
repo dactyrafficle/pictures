@@ -20,14 +20,11 @@
   <script src='./functions/download_imgdata_as_png.js?x=' + Math.random()></script>
   <script src='./functions/draw_on_canvas.js?x=' + Math.random()></script>
   <script src='./functions/flood_fill.js?x=' + Math.random()></script>
-
+  <script src='./functions/restore_original_rgb.js?x=' + Math.random()></script>
+  
   <script src='functions/getPositionAndCanvasPixelData.js?x=' + Math.random()></script>
   <script src='functions/canvasFunctions.js?x=' + Math.random()></script>
 
-
-
-
-  <script src='functions/restoreRgb.js?x=' + Math.random()></script>
 
   <script src='setup.js?x=' + Math.random()></script>
   <script src='pictures.js?x=' + Math.random()></script>
@@ -36,15 +33,50 @@
 
 </head>
 
+<!-- opening L0 -->
 <div style='display: flex; flex-direction: row;'>
 
+<!-- opening L1 -->
 <div id='my_sidebar_container' class='box border margin padding'>
 
-  <div id='remove_alpha_control_module_el'></div>
+  <!-- opening L2 -->
+	<div class='section border margin padding' style='text-align: center;'>
+    <div style='margin: 15px auto;'>
+      <a style='text-decoration: none;' href='#'>Here</a>
+      <span style='margin: 0 10px;'>|</span>
+      <a style='text-decoration: none;' href='https://github.com/dactyrafficle/pictures'>Github</a>
+      <span style='margin: 0 10px;'>|</span>
+      <a style='text-decoration: none;' href='notes.html'>Notes</a>
+    </div>
+  </div> <!-- closing L2 -->
+  
+  <!-- opening L2 -->
+	<div class='section border margin padding outer'>
+		<div class='middle padding'>
+			<div class='inner' style='margin: 15px;'>
+				<img id='myThumbnailImage' class='myThumbnailImage' src='./includes/sunflower.jpg' style='display: block; margin: auto;' width='100' />
+			</div>
+		</div>
+	</div> <!-- closing L2 -->
+
+  <!-- opening L2 -->
+	<div class='section border margin padding'>
+		<button id='myApplyChangesButton'>Apply</button>
+		<button id='myUndoChangesButton'>Undo</button>
+		<button id='myRestoreButton'>Restore</button>
+    <button id='mySelectButton'>Select</button>
+	</div> <!-- closing L2 -->
+  
+  <div id='remove_alpha_control_module_container'></div>
   <script>
-    remove_alpha_control_module_el.appendChild(return_remove_alpha_control_module());
+    remove_alpha_control_module_container.appendChild(return_remove_alpha_control_module());
   </script>
 
+  <div id='restore_original_rgb_module_container'></div>
+  <script>
+    restore_original_rgb_module_container.appendChild(return_restore_original_rgb_control_module());
+  </script>
+  
   <div id='draw_on_canvas_control_module'></div>
   <script>
     draw_on_canvas_control_module.appendChild(return_draw_on_canvas_control_module());
@@ -60,39 +92,40 @@
     download_imgdata_as_png_control_module.appendChild(return_download_imgdata_as_png_control_module());
   </script>
   
-	<div class='section border margin padding' style='text-align: center;'>
-    <div style='margin: 15px auto;'>
-      <a style='text-decoration: none;' href='#'>Here</a>
-      <span style='margin: 0 10px;'>|</span>
-      <a style='text-decoration: none;' href='https://github.com/dactyrafficle/pictures'>Github</a>
-      <span style='margin: 0 10px;'>|</span>
-      <a style='text-decoration: none;' href='notes.html'>Notes</a>
-    </div>
-  </div>
-  
-	<div class='section border margin padding outer'>
-		<div class='middle padding'>
-			<div class='inner' style='margin: 15px;'>
-				<img id='myThumbnailImage' class='myThumbnailImage' src='./includes/sunflower.jpg' width='100' />
-			</div>
-		</div>
-	</div>
+
  
-	<div class='section border margin padding'>
-		<button id='myApplyChangesButton'>Apply</button>
-		<button id='myUndoChangesButton'>Undo</button>
-		<button id='myRestoreButton'>Restore</button>
-    <button id='mySelectButton'>Select</button>
-	</div>
+
  
-	<div class='section border margin padding'>
-		<div><span class='sliderNames'>red</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myInputRed'/><span id='myInputRedValue'>50</span></div>
+    <!-- opening L2 -->
+    <div class='section border margin padding'>
+      <div id='bita' class='noselect section margin blue'> COLORS </div>
+      <div id='bitb' class='noselect' style='display: none; margin 1vh;'>
+		
+    <div><span class='sliderNames'>red</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myInputRed'/><span id='myInputRedValue'>50</span></div>
 		<div><span class='sliderNames'>green</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myInputGreen'/><span id='myInputGreenValue'>50</span></div>
 		<div><span class='sliderNames'>blue</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myInputBlue'/><span id='myInputBlueValue'>50</span></div>
 		<div><span class='sliderNames'>gray</span><input class='myInputs' type='range' min='0' max='100' value='0' id='myInputGray'/><span id='myInputGrayValue'>0</span></div>
 		<div><span class='sliderNames'>invert</span><input class='myInputs' type='range' min='0' max='100' value='0' id='myInputInvert'/><span id='myInputInvertValue'>0</span></div>
 		<div><span class='sliderNames'>light</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myBrightnessInput'/><span id='myBrightnessInputValue'>50</span></div>
-		</div>
+      </div>
+    </div> <!-- closing L2 -->
+    
+    <script>
+    window.addEventListener('load', function() {
+      let y = document.getElementById('bitb');
+      bita.addEventListener('click', function() {
+        console.log(y.style);
+        if (y.style.display === 'none') {
+          y.style.display = 'block';
+          return;
+        }
+        if (y.style.display === 'block') {
+          y.style.display = 'none';
+          return;
+        }
+      });
+    });
+    </script>
 	
 	<div class='section border margin padding'>
 		<div><span class='sliderNames'>blur</span><input class='myInputs' type='range' min='0' max='50' value='0' id='myBlurInput'/><span id='myBlurInputValue'>0</span></div>
@@ -106,22 +139,23 @@
 		<div><span class='sliderNames'>pixel</span><input class='myInputs' type='range' min='1' max='50' value='1' id='myInputPixel'/><span id='myInputPixelValue'>1</span></div>
 		<div><span class='sliderNames'>tmask</span><input class='myInputs' type='range' min='0' max='255' value='0' id='myInputTrunc'/><span id='myInputTruncValue'>0</span></div>
 	</div>
-	
-  
-	<div class='section border margin padding'>
-   <h4> POINTILIZE </h4>
+
+    <!-- opening L2 -->
+    <div class='section border margin padding'>
+    <div id='bitx' class='noselect section margin blue'> POINTILIZE </div>
+    <div id='bity' class='noselect' style='display: none; margin 1vh;'>
     <table class='mytables'>
-     <tr><td></td><td>radius</td><td>alpha</td></tr>
-     <tr>
-      <td> min </td>
-      <td><input id='pointilize_r_min' type="number" step="1" min="1" max="50" value="1" /></td>
-      <td><input id='pointilize_a_max' type="number" step="1" min="0" max="255" value="120" /></td>    
-     </tr>
-     <tr>
-      <td> max </td>
-      <td><input id='pointilize_r_max' type="number" step="1" min="1" max="50" value="7" /></td>
-      <td><input id='pointilize_a_min' type="number" step="1" min="0" max="255" value="1" /></td>    
-     </tr>
+    <tr><td></td><td>radius</td><td>alpha</td></tr>
+    <tr>
+    <td> min </td>
+    <td><input id='pointilize_r_min' type="number" step="1" min="1" max="50" value="1" /></td>
+    <td><input id='pointilize_a_max' type="number" step="1" min="0" max="255" value="120" /></td>    
+    </tr>
+    <tr>
+    <td> max </td>
+    <td><input id='pointilize_r_max' type="number" step="1" min="1" max="50" value="7" /></td>
+    <td><input id='pointilize_a_min' type="number" step="1" min="0" max="255" value="1" /></td>    
+    </tr>
     </table>
     <p> n_dots per frame : 100 </p>
     <p> fps : 1000/50 </p>
@@ -131,7 +165,25 @@
     <p> As radius goes down, color gets more opaque </p>
     <p> Alpha @0 = transparent </p>
     <p> Alpha @255 = opaque </p>
-	</div>
+    </div>
+    </div> <!-- closing L2 -->
+    
+    <script>
+    window.addEventListener('load', function() {
+      let y = document.getElementById('bity');
+      bitx.addEventListener('click', function() {
+        console.log(y.style);
+        if (y.style.display === 'none') {
+          y.style.display = 'block';
+          return;
+        }
+        if (y.style.display === 'block') {
+          y.style.display = 'none';
+          return;
+        }
+      });
+    });
+    </script>
 
   
 	<div class='section border margin padding'>
@@ -146,12 +198,10 @@
 
 <!-- opening L1 -->
 <div id='my_content_container' class='box border margin padding'>
-
-  <div id='my_drop_zone' style='display: flex; flex-direction: column;' class='border margin padding'>
-    <span id='myDropZoneText' class='myDropZoneText'>Drag and drop and image here.</span>
-    <div id='canvas_container' class=''>
-    <canvas id='myCanvas' class='myCanvas'></canvas>
-    </div>
+	
+  <div id='my_drop_zone' style='display: block; position: relative; width: 400px; height: 300px;' class='border margin'>
+    <div id='my_drop_zone_text_box' class='noselect' style='display: block; position: absolute; top: 0; left: 0; width: 400px; height: 300px;'>Drag and drop and image here.</div>
+    <canvas id='myCanvas' style='display: block; position: absolute; top: 0; left: 0;' width=0 height=0 ></canvas>
   </div>
   
   <div class='border margin padding'>
