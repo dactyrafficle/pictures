@@ -1,33 +1,9 @@
-// setup variables
-var myCanvas = document.getElementById('myCanvas');
-var mySideBar = document.getElementById('mySideBar');
-var myDropZone, myThumbnailImage, myDropZoneText;
-var c, ctx;
-var originalImageData, workingImageData;
-var myInputArray;
-var draw;
 
-var currentColorObj = {};
-var selectedColorObj = {};
-
-var selectedColorBox = document.getElementById('selectedColorBox');
-var selectedColorBoxInfo = document.getElementById('selectedColorBoxInfo');
-var currentColorBox = document.getElementById('currentColorBox');
-var currentColorBoxInfo = document.getElementById('currentColorBoxInfo');
-
-
-let selectMode = false;
-let selection = {
-  'x0':null,
-  'y0':null,
-  'x1':null,
-  'y1':null
-}
-
-var mouseIsPressed = false;
-	
 (function() {
-  
+
+
+  window.addEventListener('load', function() {
+    
       mySelectButton.addEventListener('click', function() {
         if (selectMode) {
           selectMode = false;
@@ -40,42 +16,53 @@ var mouseIsPressed = false;
         }
         // console.log(selectMode);
       });
+
+  });
+  
+  window.addEventListener('load', function() {
+    
+    // click on thumbnail to set canvas image as thumbnail image
+    document.getElementById('myThumbnailImage').addEventListener('click', function(e){
+      console.log(e);
+      let tempImage = document.createElement('img');
+      tempImage.src = this.src;
+      tempImage.onload = function() {
+      
+        let originalImageWidth = tempImage.width;
+        let originalImageHeight = tempImage.height;
+        // initializes the canvas: clear and resize dropzone + canvas, set thumbnail and capture original image data
+        placeImageOnCanvasAndSetOriginalImgData(my_drop_zone, c, ctx, myThumbnailImage, tempImage, originalImageWidth, originalImageHeight);
+        restoreMyInputs();
+          
+      }
+    });
+    
+  });
       
 
-			// click on thumbnail to set canvas image as thumbnail image
-			document.getElementById('myThumbnailImage').addEventListener('click', function(e){
-				console.log(e);
-				let tempImage = document.createElement('img');
-				tempImage.src = this.src;
-				tempImage.onload = function() {
-				
-					let originalImageWidth = tempImage.width;
-					let originalImageHeight = tempImage.height;
-					// initializes the canvas: clear and resize dropzone + canvas, set thumbnail and capture original image data
-					placeImageOnCanvasAndSetOriginalImgData(myDropZone, c, ctx, myThumbnailImage, tempImage, originalImageWidth, originalImageHeight);
-					restoreMyInputs();
-						
-				}
-			});
-			
-			
-			// get selected color
-			myCanvas.addEventListener('click', function(e) {
-				let p = findPos(this, e);
-				selectedColorObj = getColor(workingImageData, p.x, p.y);
-				
-				let c = getColor(workingImageData, p.x, p.y);
-			  // console.log(selectMode);
-        
-				selectedColorBox.style.backgroundColor = "rgb("+ c.r + ", " + c.g + ", " + c.b + ", " + c.a + ")";
-				selectedColorBoxInfo.innerHTML = "<strong>selected color</strong><br>(x,y) = (" + c.x + ", " + c.y + ")" + '<br>' + " rgb: ("+ c.r + ", " + c.g + ", " + c.b + ", " + c.a + ")";
-				
-        
-        // console.log(c);
-        
-        // if select mode is true, draw a box
-			});
+
+  window.addEventListener('load', function() {
+
+    // get selected color
+    myCanvas.addEventListener('click', function(e) {
+    let p = findPos(this, e);
+    selectedColorObj = getColor(workingImageData, p.x, p.y);
+
+    let c = getColor(workingImageData, p.x, p.y);
+    // console.log(selectMode);
+
+    selected_color_box.style.backgroundColor = "rgb(" + c.r + ", " + c.g + ", " + c.b + ", " + c.a + ")";
+    selectedColorBoxInfo.innerHTML = "<div>selected color</div><div>(x,y) = (" + c.x + ", " + c.y + ")" + '</div><div>' + " (r,g,b,a) = ("+ c.r + ", " + c.g + ", " + c.b + ", " + c.a + ")</div>";
+
+
+    // console.log(c);
+
+    // if select mode is true, draw a box
+    });
+  });
       
+   window.addEventListener('load', function() {
+     
 			myCanvas.addEventListener('mousedown', function(e) {
 				let p = findPos(this, e);
 				selectedColorObj = getColor(workingImageData, p.x, p.y);
@@ -121,49 +108,34 @@ var mouseIsPressed = false;
 				currentColorObj = getColor(workingImageData, p.x, p.y);
 				let c = getColor(workingImageData, p.x, p.y);
 				
-				currentColorBox.style.backgroundColor = "rgb("+ c.r + ", " + c.g + ", " + c.b + ", " + c.a + ")";
-				currentColorBoxInfo.innerHTML = "<strong>current color</strong><br>(x,y) = (" + c.x + ", " + c.y + ")" + '<br>' + " rgb: ("+ c.r + ", " + c.g + ", " + c.b + ", " + c.a + ")";
+				current_color_box.style.backgroundColor = "rgb("+ c.r + ", " + c.g + ", " + c.b + ", " + c.a + ")";
+				currentColorBoxInfo.innerHTML = "<div>current color</div><div>(x,y) = (" + c.x + ", " + c.y + ")" + '</div><div>' + " (r,g,b,a) = ("+ c.r + ", " + c.g + ", " + c.b + ", " + c.a + ")</div>";
 
 			});
 
 
-			
-				// here
+
+      
+
 	
-	// ^^ nonsense testing
+
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	// initializing	
-	myInputArray = [50, 50, 50, 0, 0, 50, 0, 0, 255, 0, 1, 1, 0];
-	myDropZone = document.getElementById('myDropZone');
-	myThumbnailImage = document.getElementById('myThumbnailImage');
-	myDropZoneText = document.getElementById('myDropZoneText');
-	c = document.getElementById('myCanvas');
-	ctx = c.getContext('2d');
-	
-  myDropZone.addEventListener('dragenter', function(e) {
+  my_drop_zone.addEventListener('dragenter', function(e) {
     e.stopPropagation();
     e.preventDefault();
     this.style.border = '2px solid #999';
   }, false);	
-  myDropZone.addEventListener('dragover', function(e) {
+  my_drop_zone.addEventListener('dragover', function(e) {
     e.stopPropagation();
     e.preventDefault();
     this.style.border = '2px solid #999';
   }, false);
-  myDropZone.addEventListener('dragleave', function(e) {
+  my_drop_zone.addEventListener('dragleave', function(e) {
     e.stopPropagation();
     e.preventDefault();
     this.style.border = '2px solid #ddd';
   }, false);
-  myDropZone.addEventListener('drop', function(e) {
+  my_drop_zone.addEventListener('drop', function(e) {
   
 		// 1. stop the default behavior of drop
 		e.stopPropagation();
@@ -361,13 +333,14 @@ var mouseIsPressed = false;
 	let section5 = document.createElement('div');
 	section5.id = 'section5';
 	section5.classList.add('mySideBarContents');
-	mySideBar.appendChild(section5);
+	my_sidebar_container.appendChild(section5);
 
-	section5.appendChild(addDrawOnCanvasModule());
-	section5.appendChild(addFloodFillModule());
 	section5.appendChild(addRestoreRgbModule());
   
 	// section5.appendChild(return_remove_alpha_control_module());
+  
+  
+  }); // closing window.onload
 	
 }());  // closing initialization
 

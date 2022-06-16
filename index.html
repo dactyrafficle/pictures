@@ -12,79 +12,80 @@
 
   <link rel="stylesheet" href="./includes/a.css">
   <script src='./includes/Box.js'></script>
+  
+  <!-- declare and initialize global variables -->
+  <script src='./global_variables.js'></script>
 
   <script src='./functions/remove_alpha.js?x=' + Math.random()></script>
   <script src='./functions/download_imgdata_as_png.js?x=' + Math.random()></script>
+  <script src='./functions/draw_on_canvas.js?x=' + Math.random()></script>
+  <script src='./functions/flood_fill.js?x=' + Math.random()></script>
+
+  <script src='functions/getPositionAndCanvasPixelData.js?x=' + Math.random()></script>
+  <script src='functions/canvasFunctions.js?x=' + Math.random()></script>
+
+
+
+
+  <script src='functions/restoreRgb.js?x=' + Math.random()></script>
+
+  <script src='setup.js?x=' + Math.random()></script>
+  <script src='pictures.js?x=' + Math.random()></script>
+
+  <script src='https://cdn.jsdelivr.net/gh/snorpey/triangulate-image/dist/triangulate-image-browser.min.js'></script>
 
 </head>
 
-<div id='myMain' class='myMain'>
+<div style='display: flex; flex-direction: row;'>
 
-	<div id='myDropZone' class='myDropZone'>
-		<span id='myDropZoneText' class='myDropZoneText'>Drag and drop and image here.</span>
-		<canvas id='myCanvas' class='myCanvas'></canvas>
-	</div>
-	
-	<div class='colorInfoParentContainer'>
-	
-		<div id='selectedColorBoxContainer' class='colorInfoContainer'>
-			<div id='selectedColorBox' class='colorBox'></div>
-			<div id='selectedColorBoxInfo'>
-				<span><strong>selected color</strong></span><br>
-				<span>(x,y) = (x, y)</span><br>
-				<span>rgb: (r, g, b, a)</span>
-			</div>
-		</div>
-		
-		<div id='currentColorBoxContainer' class='colorInfoContainer'>
-			<div id='currentColorBox' class='colorBox'></div>
-			<div id='currentColorBoxInfo'>
-				<span><strong>current color</strong></span><br>
-				<span>(x,y) = (x, y)</span><br>
-				<span>rgb: (r, g, b, a)</span>
-			</div>
-		</div>
-	
-	</div>
-		
-</div>
+<div id='my_sidebar_container' class='box border margin padding'>
 
-<div id='mySideBar' class='mySideBar'>
-
-  <div id='remove_alpha_control_module'></div>
+  <div id='remove_alpha_control_module_el'></div>
   <script>
-    remove_alpha_control_module.appendChild(return_remove_alpha_control_module());
+    remove_alpha_control_module_el.appendChild(return_remove_alpha_control_module());
   </script>
 
+  <div id='draw_on_canvas_control_module'></div>
+  <script>
+    draw_on_canvas_control_module.appendChild(return_draw_on_canvas_control_module());
+  </script>
+
+  <div id='flood_fill_control_module'></div>
+  <script>
+    flood_fill_control_module.appendChild(return_flood_fill_control_module());
+  </script>
+  
   <div id='download_imgdata_as_png_control_module'></div>
   <script>
     download_imgdata_as_png_control_module.appendChild(return_download_imgdata_as_png_control_module());
   </script>
   
-	<p>
-		<a style='margin: 0px 10px 0px 10px; text-decoration: none;' href='#'>Here</a>
-		<span>|</span>
-		<a style='margin: 0px 10px 0px 10px; text-decoration: none;' href='https://github.com/dactyrafficle/pictures'>Github</a>
-		<span>|</span>
-		<a style='margin: 0px 5px 0px 10px; text-decoration: none;' href='notes.html'>Notes</a>
-	</p>
- 
- 	<div class='mySideBarContents outer'>
-		<div class='middle'>
-			<div class='inner'>
-				<img id='myThumbnailImage' class='myThumbnailImage' src='images/sunflower.jpg' width='100' />
+	<div class='section border margin padding' style='text-align: center;'>
+    <div style='margin: 15px auto;'>
+      <a style='text-decoration: none;' href='#'>Here</a>
+      <span style='margin: 0 10px;'>|</span>
+      <a style='text-decoration: none;' href='https://github.com/dactyrafficle/pictures'>Github</a>
+      <span style='margin: 0 10px;'>|</span>
+      <a style='text-decoration: none;' href='notes.html'>Notes</a>
+    </div>
+  </div>
+  
+	<div class='section border margin padding outer'>
+		<div class='middle padding'>
+			<div class='inner' style='margin: 15px;'>
+				<img id='myThumbnailImage' class='myThumbnailImage' src='./includes/sunflower.jpg' width='100' />
 			</div>
 		</div>
 	</div>
  
-	<div class='mySideBarContents'>
+	<div class='section border margin padding'>
 		<button id='myApplyChangesButton'>Apply</button>
 		<button id='myUndoChangesButton'>Undo</button>
 		<button id='myRestoreButton'>Restore</button>
     <button id='mySelectButton'>Select</button>
 	</div>
  
-	<div class='mySideBarContents'>
+	<div class='section border margin padding'>
 		<div><span class='sliderNames'>red</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myInputRed'/><span id='myInputRedValue'>50</span></div>
 		<div><span class='sliderNames'>green</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myInputGreen'/><span id='myInputGreenValue'>50</span></div>
 		<div><span class='sliderNames'>blue</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myInputBlue'/><span id='myInputBlueValue'>50</span></div>
@@ -93,21 +94,21 @@
 		<div><span class='sliderNames'>light</span><input class='myInputs' type='range' min='0' max='100' value='50' id='myBrightnessInput'/><span id='myBrightnessInputValue'>50</span></div>
 		</div>
 	
-	<div class='mySideBarContents'>
+	<div class='section border margin padding'>
 		<div><span class='sliderNames'>blur</span><input class='myInputs' type='range' min='0' max='50' value='0' id='myBlurInput'/><span id='myBlurInputValue'>0</span></div>
 		<div><span class='sliderNames'>sharp</span><input class='myInputs' type='range' min='0' max='50' value='0' id='myInputSharpen'/><span id='myInputSharpenValue'>0</span></div>
 		<div><span class='sliderNames'>thresh1</span><input class='myInputs' type='range' min='0' max='255' value='255' id='myInputThresh'/><span id='myInputThreshValue'>255</span></div>
 		<div><span class='sliderNames'>thresh2</span><input class='myInputs' type='range' min='0' max='255' value='0' id='myInputThresh'/><span id='myInputThreshValue'>0</span></div>
 	</div>
 
-	<div class='mySideBarContents'>
+	<div class='section border margin padding'>
 		<div><span class='sliderNames'>trunc</span><input class='myInputs' type='range' min='1' max='50' value='1' id='myInputTrunc'/><span id='myInputTruncValue'>1</span></div>
 		<div><span class='sliderNames'>pixel</span><input class='myInputs' type='range' min='1' max='50' value='1' id='myInputPixel'/><span id='myInputPixelValue'>1</span></div>
 		<div><span class='sliderNames'>tmask</span><input class='myInputs' type='range' min='0' max='255' value='0' id='myInputTrunc'/><span id='myInputTruncValue'>0</span></div>
 	</div>
 	
   
-	<div class='mySideBarContents'>
+	<div class='section border margin padding'>
    <h4> POINTILIZE </h4>
     <table class='mytables'>
      <tr><td></td><td>radius</td><td>alpha</td></tr>
@@ -133,7 +134,7 @@
 	</div>
 
   
-	<div class='mySideBarContents'>
+	<div class='section border margin padding'>
 		<div class='mod-headers'>Sobel:<button id='mySobelButton'>preview</button></div>
     
     
@@ -143,22 +144,39 @@
 	
 </div>
 
-<script src='functions/getPositionAndCanvasPixelData.js?x=' + Math.random()></script>
-<script src='functions/canvasFunctions.js?x=' + Math.random()></script>
+<!-- opening L1 -->
+<div id='my_content_container' class='box border margin padding'>
 
-<script src='functions/drawOnCanvas.js?x=' + Math.random()></script>
-<script src='functions/floodFill.js?x=' + Math.random()></script>
+  <div id='my_drop_zone' style='display: flex; flex-direction: column;' class='border margin padding'>
+    <span id='myDropZoneText' class='myDropZoneText'>Drag and drop and image here.</span>
+    <div id='canvas_container' class=''>
+    <canvas id='myCanvas' class='myCanvas'></canvas>
+    </div>
+  </div>
+  
+  <div class='border margin padding'>
 
+    <div id='current_color_box' style='width: 50px; height: 50px;' class='border margin padding'></div>
+    <div id='currentColorBoxInfo' style='font-family: monospace;'>
+      <div>current color</div>
+      <div>(x,y) = (x, y)</div>
+      <div>(r,g,b,a) = (r, g, b, a)</div>
+    </div>
 
-<script src='functions/restoreRgb.js?x=' + Math.random()></script>
+    <div id='selected_color_box' style='width: 50px; height: 50px;' class='border margin padding'></div>
+    <div id='selectedColorBoxInfo' style='font-family: monospace;'>
+      <span><strong>selected color</strong></span><br>
+      <span>(x,y) = (x, y)</span><br>
+      <span>(r,g,b,a) = (r, g, b, a)</span>
+    </div>
+    
+  </div>
 
-<script src='setup.js?x=' + Math.random()></script>
-<script src='pictures.js?x=' + Math.random()></script>
+</div> <!-- closing L1 -->
 
+</div>
+ 
+ 
 
-
-<script src='https://cdn.jsdelivr.net/gh/snorpey/triangulate-image/dist/triangulate-image-browser.min.js'></script>
-
-<script></script>
 
 </html>
