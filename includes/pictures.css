@@ -1,10 +1,4 @@
 
-
-.myThumbnailImage {
-	display: block;
-	margin: auto;
-}
-
 button {
   font-family: consolas;
   margin: 3px;
@@ -17,8 +11,6 @@ button {
 }
 
 #my_drop_zone {
-	width: 400px;
-	height: 300px;
 	line-height: 300px;
 	text-align: center;
 	font-family: calibri, 'sans-serif';
