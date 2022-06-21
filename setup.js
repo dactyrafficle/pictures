@@ -233,17 +233,9 @@
 		console.log(value);
 	});
 
-	// blur event listener
-	myInputs[6].addEventListener('change', function() {
-		updateInputArray();
-		let n = 5;
-		let sd = this.value/10;
-		var x = applyBlur(workingImageData, n, sd);
-		ctx.putImageData(x, 0, 0);	
-	});
 
 	// sharpen event listener
-	myInputs[7].addEventListener('change', function() {
+	myInputs[6].addEventListener('change', function() {
 		updateInputArray();
 		let n = 5;
 		let sd = this.value/10;
@@ -252,7 +244,7 @@
 	});	
 	
 	// threshold1 event listener
-	myInputs[8].addEventListener('change', function() {
+	myInputs[7].addEventListener('change', function() {
 		updateInputArray();
 		let thresh = this.value;
 		var x = applyThreshold(workingImageData, thresh, true);
@@ -260,7 +252,7 @@
 	});
 	
 	// threshold2 event listener
-	myInputs[9].addEventListener('change', function() {
+	myInputs[8].addEventListener('change', function() {
 		updateInputArray();
 		let thresh = this.value;
 		var x = applyThreshold(workingImageData, thresh, false);
@@ -268,7 +260,7 @@
 	});
 	
 	// truncate event listener
-	myInputs[10].addEventListener('change', function() {
+	myInputs[9].addEventListener('change', function() {
 		updateInputArray();
 		let n = this.value;
 		var x = applyTruncate(workingImageData, n);
@@ -276,7 +268,7 @@
 	});
 	
 	// pixelate event listener
-	myInputs[11].addEventListener('change', function() {
+	myInputs[10].addEventListener('change', function() {
 		updateInputArray();
 		let s = myInputArray[11];
 		var x = applyPixelation(workingImageData, s);
@@ -284,7 +276,7 @@
 	});
 	
 	// tmask (contrast) event listener
-	myInputs[12].addEventListener('change', function() {
+	myInputs[11].addEventListener('change', function() {
 		updateInputArray();
 		let thresh = myInputArray[12];
 		var x = applyContrast(workingImageData, thresh);
@@ -389,7 +381,7 @@ function placeImageOnCanvasAndSetOriginalImgData(container, canvas, context, myT
 }
 // basic validation
 function isValidImageFileType(fileType) {
-  let allowableFileTypes = ['png', 'jpg', 'jpeg', 'jfif', 'gif', 'bmp'];
+  let allowableFileTypes = ['png', 'PNG', 'jpg', 'JPG', 'jpeg', 'JPEG', 'jfif', 'JFIF', 'gif', 'GIF', 'bmp', 'BMP'];
   let validImageFileType = false;
   if (allowableFileTypes.indexOf(fileType) !== -1) {
     validImageFileType = true;
@@ -416,13 +408,12 @@ function restoreMyInputs() {
 	inputs[3].value = 0;
 	inputs[4].value = 0;
 	inputs[5].value = 50;
-	inputs[6].value = 0;	
-	inputs[7].value = 0;
-	inputs[8].value = 255;
-	inputs[9].value = 0;
+	inputs[6].value = 0;  // sharpen
+	inputs[7].value = 255; // thresh1
+	inputs[8].value = 0; // thresh2
+	inputs[9].value = 1; // 
 	inputs[10].value = 1;
-	inputs[11].value = 1;
-	inputs[12].value = 0;
+	inputs[11].value = 0;
 	
 	for (var i = 0; i < inputs.length; i++) {
 		inputs[i].nextElementSibling.textContent = inputs[i].value;

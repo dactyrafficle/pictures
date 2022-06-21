@@ -21,6 +21,9 @@
   <script src='./functions/draw_on_canvas.js?x=' + Math.random()></script>
   <script src='./functions/flood_fill.js?x=' + Math.random()></script>
   <script src='./functions/restore_original_rgb.js?x=' + Math.random()></script>
+
+  <script src='./functions/Gaussian_blur.js?x=' + Math.random()></script>
+  <script src='./functions/sharpen.js?x=' + Math.random()></script>
   
   <script src='functions/getPositionAndCanvasPixelData.js?x=' + Math.random()></script>
   <script src='functions/canvasFunctions.js?x=' + Math.random()></script>
@@ -92,7 +95,10 @@
     download_imgdata_as_png_control_module.appendChild(return_download_imgdata_as_png_control_module());
   </script>
   
-
+  <div id='axx'></div>
+  <script>
+    axx.appendChild(return_Gaussian_blur_module());
+  </script>
  
 
  
@@ -126,10 +132,13 @@
       });
     });
     </script>
-	
+   
 	<div class='section border margin padding'>
-		<div><span class='sliderNames'>blur</span><input class='myInputs' type='range' min='0' max='50' value='0' id='myBlurInput'/><span id='myBlurInputValue'>0</span></div>
-		<div><span class='sliderNames'>sharp</span><input class='myInputs' type='range' min='0' max='50' value='0' id='myInputSharpen'/><span id='myInputSharpenValue'>0</span></div>
+    <div> le processus [opposé / inverse] de flouter </div>
+		<span class='sliderNames'>sharp</span><input class='myInputs' type='range' min='0' max='50' value='0' id='myInputSharpen'/><span id='myInputSharpenValue'>0</span></div>
+    
+	<div class='section border margin padding'>
+    
 		<div><span class='sliderNames'>thresh1</span><input class='myInputs' type='range' min='0' max='255' value='255' id='myInputThresh'/><span id='myInputThreshValue'>255</span></div>
 		<div><span class='sliderNames'>thresh2</span><input class='myInputs' type='range' min='0' max='255' value='0' id='myInputThresh'/><span id='myInputThreshValue'>0</span></div>
 	</div>
